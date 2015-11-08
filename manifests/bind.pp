@@ -12,6 +12,13 @@ class profiles::bind {
   create_resources('bind::acl', $bindacl)
   create_resources('bind::zone', $bindzone)
   create_resources('bind::view', $bindview)
-  create_resources('resource_record', $bindrr)
+
+  $rrdefaults = {
+    ensure => present,
+    ttl    => 86400,
+    type   => A,
+  }
+
+  create_resources('resource_record', $bindrr, $rrdefaults)
 
 }
