@@ -4,7 +4,7 @@ class profiles::bind {
   $bindacl  = hiera('profiles::bind::bindacl')
   $bindzone = hiera('profiles::bind::bindzone')
   $bindview = hiera('profiles::bind::bindview')
-  $bindrr   = hiera('profiles::bind::bindrr')
+  # $bindrr   = hiera('profiles::bind::bindrr')
 
   contain '::bind'
 
@@ -12,7 +12,7 @@ class profiles::bind {
   create_resources('bind::acl', $bindacl)
   create_resources('bind::zone', $bindzone)
   create_resources('bind::view', $bindview)
-  create_resources('::bind::resource_record', $bindrr)
+  # create_resources('::bind::resource_record', $bindrr)
 
 }
 
