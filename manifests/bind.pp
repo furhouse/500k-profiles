@@ -12,6 +12,6 @@ class profiles::bind {
   create_resources('bind::acl', $bindacl)
   create_resources('bind::zone', $bindzone)
   create_resources('bind::view', $bindview)
-  create_resources('::bind::resource_record', $bindrr)
+  create_resources('resource_record', $bindrr)
 
 }
