@@ -2,6 +2,9 @@ class profiles::foremanproxy {
 
   ## SSL and CA configuration
   # Open read permissions to private keys to puppet group for foreman, proxy etc.
+
+  contain '::puppet'
+
   file { "${::puppet_vardir}/ssl":
     ensure => directory,
     owner  => $puppet::server_user,
