@@ -6,10 +6,6 @@ class profiles::bind {
   $bindview = hiera('profiles::bind::bindview')
   $bindrr   = hiera('profiles::bind::bindrr')
 
-  $defaults = {
-    'require' => Service['bind'],
-  }
-
   contain '::bind'
 
   create_resources('bind::key', $bindkey)
@@ -23,6 +19,10 @@ class profiles::bind {
     # type   => A,
   # }
 
-  create_resources('resource_record', $bindrr)
+  $defaults = {
+    'notify' => Service['bind'],
+  }
+
+  create_resources('resource_record', $bindrr, $defaults)
 
 }
