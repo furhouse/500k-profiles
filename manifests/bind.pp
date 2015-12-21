@@ -6,6 +6,10 @@ class profiles::bind {
   $bindview = hiera('profiles::bind::bindview')
   $bindrr   = hiera('profiles::bind::bindrr')
 
+  $defaults = {
+    'require' => Class['bind::key'],
+  }
+
   contain '::bind'
 
   create_resources('bind::key', $bindkey)
