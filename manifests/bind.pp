@@ -20,7 +20,7 @@ class profiles::bind {
   # }
 
   $defaults = {
-    'notify' => Service['bind'],
+    'require' => Package['bind'],
   }
 
   create_resources('resource_record', $bindrr, $defaults)
