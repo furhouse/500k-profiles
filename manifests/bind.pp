@@ -7,7 +7,7 @@ class profiles::bind {
   $bindrr   = hiera('profiles::bind::bindrr')
 
   $defaults = {
-    'require' => Class['bind::key'],
+    'require' => Service['bind'],
   }
 
   contain '::bind'
