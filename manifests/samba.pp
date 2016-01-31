@@ -1,13 +1,13 @@
 class profiles::samba {
 
-  # $server  = hiera('profiles::samba::server')
-
-  $share      = hiera('profiles::samba::share')
-  $interfaces = hiera('profiles::samba::interfaces')
+  $share         = hiera('profiles::samba::share')
+  $workgroup     = hiera('profiles::samba::workgroup')
+  $server_string = hiera('profiles::samba::server_string')
+  $interfaces    = hiera('profiles::samba::interfaces')
 
   class { 'samba::server':
-    workgroup     => '500k.lan',
-    server_string => '500k.lan Samba',
+    workgroup     => $workgroup,
+    server_string => $server_string,
     interfaces    => $interfaces,
     security      => 'user',
     printing      => 'bsd',
