@@ -2,6 +2,8 @@ class profiles::samba {
 
   # $server  = hiera('profiles::samba::server')
 
+  $share  = hiera('profiles::samba::share')
+
   # contain '::samba'
 
   class { 'samba::server':
@@ -10,5 +12,9 @@ class profiles::samba {
     interfaces    => 'br0 virbr0',
     security      => 'share',
   }
+
+  contain '::samba::server::share'
+
+  create_resources(samba::server::share, $share)
 
 }
