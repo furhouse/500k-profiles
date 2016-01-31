@@ -9,7 +9,7 @@ class profiles::libvirt {
   if $pool {
     file { 'libvirt_pool':
       ensure => directory,
-      path   => "/$pool",
+      path   => "/data",
     }
   }
 
