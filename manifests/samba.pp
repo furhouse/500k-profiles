@@ -9,6 +9,7 @@ class profiles::samba {
     server_string => '500k.lan Samba',
     interfaces    => 'br0 virbr0',
     security      => 'share',
+    printing      => 'none',
   }
 
   create_resources(samba::server::share, $share)
