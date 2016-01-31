@@ -2,7 +2,7 @@ class profiles::samba {
 
   # $server  = hiera('profiles::samba::server')
 
-  contain '::samba'
+  # contain '::samba'
 
   class { 'samba::server':
     workgroup     => '500k.lan',
