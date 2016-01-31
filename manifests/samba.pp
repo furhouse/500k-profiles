@@ -10,6 +10,7 @@ class profiles::samba {
     interfaces    => 'br0 virbr0',
     security      => 'share',
     printing      => 'bsd',
+    printcap_name => '/dev/null',
   }
 
   create_resources(samba::server::share, $share)
