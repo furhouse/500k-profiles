@@ -14,7 +14,6 @@ class profiles::backuppcserver {
   }
 
   class { '::backuppc::client':
-    system_account    => 'backuppc',
     backuppc_hostname => $::fqdn,
     xfer_method       => 'tar',
     tar_share_name    => ['/home', '/etc', '/var/log'],
@@ -23,4 +22,11 @@ class profiles::backuppcserver {
     tar_incr_args     => '--newer=$incrDate $fileList',
   }
 
+  file { '/etc/sudoers.d/backuppc_localhost':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0440',
+    content => "backuppc ALL=(ALL:ALL) NOEXEC:NOPASSWD: /bin/tar\n",
+  }
 }
