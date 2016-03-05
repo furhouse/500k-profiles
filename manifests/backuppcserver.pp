@@ -2,33 +2,15 @@ class profiles::backuppcserver {
 
   $serverpass = hiera('profiles::apache::serverpass')
 
-  class { '::apache': }
-
-  apache::vhost { "${::fqdn}":
-    docroot     => '/usr/share/backuppc/cgi-bin',
-    directories => [
-      { path           => '/usr/share/backuppc/cgi-bin',
-        directoryindex => 'index.cgi',
-        options        => ['ExecCGI','FollowSymLinks'],
-        addhandlers    => [
-          { handler  => 'cgi-script',
-          extensions => ['.cgi']}],
-        auth_user_file => '/etc/backuppc/htpasswd',
-        auth_type      => 'basic',
-        auth_name      => 'BackupPC admin',
-        auth_require   => 'valid-user',
-      },
-    ],
-  } ->
+  class { '::apache': } ->
 
   package { 'apache2-utils':
     ensure  => present,
   } ->
 
   class { '::backuppc::server':
-    backuppc_password    => $serverpass,
-    apache_configuration => false,
-    notify               => Service['apache2'],
+    backuppc_password => $serverpass,
+    notify            => Service['apache2'],
   }
 
   class { '::backuppc::client':
