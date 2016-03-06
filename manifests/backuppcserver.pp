@@ -66,14 +66,14 @@ class profiles::backuppcserver inherits ::backuppc::params {
     ensure  => present,
   }
 
-  class { '::backuppc::client':
-    backuppc_hostname => $::fqdn,
-    xfer_method       => 'tar',
-    tar_share_name    => ['/home', '/etc', '/var/log'],
-    tar_client_cmd    => '/usr/bin/sudo $tarPath -c -v -f - -C $shareName --totals',
-    tar_full_args     => '$fileList',
-    tar_incr_args     => '--newer=$incrDate $fileList',
-  }
+  # class { '::backuppc::client':
+    # backuppc_hostname => $::fqdn,
+    # xfer_method       => 'tar',
+    # tar_share_name    => ['/home', '/etc', '/var/log'],
+    # tar_client_cmd    => '/usr/bin/sudo $tarPath -c -v -f - -C $shareName --totals',
+    # tar_full_args     => '$fileList',
+    # tar_incr_args     => '--newer=$incrDate $fileList',
+  # }
 
   backuppc::server::user { 'backuppc':
     password => $serverpass,
