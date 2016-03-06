@@ -4,20 +4,58 @@ class profiles::backuppcserver inherits ::backuppc::params {
 
   class { '::apache': default_vhost => false }
 
-  apache::vhost { $::fqdn:
-    docroot        => $::backuppc::params::cgi_directory,
-    manage_docroot => false,
-    port           => '80',
-    aliases        => [ { alias => '/backuppc', path => $::backuppc::params::cgi_directory, }, ],
-    directories    => [
-      { path           => $::backuppc::params::cgi_directory,
+  class { '::apache::mod::rewrite': }
+  class { '::apache::mod::wsgi': }
+  class { '::apache::mod::ssl': }
+
+  apache::vhost { 'backuppc':
+    servername => $::fqdn,
+    port       => '80',
+    docroot    => $::backuppc::params::cgi_directory,
+    rewrites   => [
+      {
+        comment      => 'redirect to https',
+        rewrite_cond => ['%{HTTPS} off'],
+        rewrite_rule => ['(.*) https://%{HTTP_HOST}:443%{REQUEST_URI}'],
+      },
+    ],
+  }
+
+  apache::vhost{'backuppc-ssl':
+    servername      => $::fqdn,
+    ip              => '*',
+    port            => '443',
+    docroot         => $::backuppc::params::cgi_directory,
+    default_vhost   => true,
+    ssl             => true,
+    ssl_cert        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
+    ssl_key         => '/etc/ssl/private/ssl-cert-snakeoil.key',
+    ssl_chain       => undef,
+    error_log_file  => 'backuppc_error.log',
+    access_log_file => 'access.log',
+    docroot_owner   => 'www-data',
+    docroot_group   => 'www-data',
+    directories     => [
+      {
+        path           => $::backuppc::params::cgi_directory,
+        allow_override => ['None'],
+        options        => ['+ExecCGI', '-MultiViews', '+FollowSymLinks'],
+        addhandlers    => [ {
+                            handler    => 'cgi-script',
+                            extensions => ['.cgi']
+                            }
+                          ],
         directoryindex => 'index.cgi',
-        options        => ['ExecCGI','FollowSymLinks'],
-        addhandlers    => [ { handler => 'cgi-script', extensions => ['.cgi'] }, ],
         auth_user_file => $::backuppc::params::htpasswd_apache,
-        auth_type      => 'basic',
-        auth_name      => 'BackupPC admin',
+        auth_type      => 'Basic',
+        auth_name      => 'BackupPC',
         auth_require   => 'valid-user',
+      },
+    ],
+    aliases         => [
+      {
+        alias => '/backuppc',
+        path  => $::backuppc::params::cgi_directory
       },
     ],
   }
