@@ -1,6 +1,6 @@
 class profiles::backuppcserver inherits ::backuppc::params {
 
-  $serverpass = hiera('profiles::apache::serverpass')
+  $serverpass = hiera('profiles::backuppcserver::serverpass', '')
 
   class { '::apache': default_vhost => false }
 
