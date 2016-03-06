@@ -9,10 +9,11 @@ class profiles::backuppcserver inherits ::backuppc::params {
   class { '::apache::mod::ssl': }
 
   apache::vhost { 'backuppc':
-    servername => $::fqdn,
-    port       => '80',
-    docroot    => $::backuppc::params::cgi_directory,
-    rewrites   => [
+    servername     => $::fqdn,
+    manage_docroot => false,
+    port           => '80',
+    docroot        => $::backuppc::params::cgi_directory,
+    rewrites       => [
       {
         comment      => 'redirect to https',
         rewrite_cond => ['%{HTTPS} off'],
@@ -23,6 +24,7 @@ class profiles::backuppcserver inherits ::backuppc::params {
 
   apache::vhost{'backuppc-ssl':
     servername      => $::fqdn,
+    manage_docroot  => false,
     ip              => '*',
     port            => '443',
     docroot         => $::backuppc::params::cgi_directory,
