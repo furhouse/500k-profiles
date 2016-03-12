@@ -18,8 +18,28 @@ class profiles::postfix {
 
   include ::staging
   staging::deploy { 'postfixadmin-2.93.tar.gz':
-    source => "puppet:///modules/${module_name}/files/postfixadmin-2.93.tar.gz",
-    target => '/var/www/postfixadmin',
+    source => "puppet:///modules/${module_name}/postfixadmin-2.93.tar.gz",
+    target => '/usr/share',
   }
+
+  define postfixadmin::config (
+    $db_type   = 'mysqli',
+    $db_host   = 'localhost',
+    $db_user   = 'postfix',
+    $db_passwd = 'postfixadmin',
+    $db_name   = 'postfix'
+  ) {
+    file { 'postfixadmin-config' :
+      ensure  => file,
+      path    => '/usr/share/postfixadmin-2.93/config.inc.php',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/postfixadmin-2.93_config.inc.php.erb"),
+      require => Class['staging::deploy'],
+    }
+  }
+
+  postfixadmin::config { "postfixadmin-config-${fqdn}": }
 
 }
