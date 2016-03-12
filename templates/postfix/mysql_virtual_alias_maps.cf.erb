@@ -1,0 +1,8 @@
+# Managed by Puppet
+
+user = postfix
+password = Your2ndPassword
+hosts = localhost
+dbname = postfix
+query = SELECT goto FROM alias WHERE address='%s' AND active = '1'
+
