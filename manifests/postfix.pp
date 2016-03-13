@@ -112,8 +112,10 @@ class profiles::postfix {
 
   class { '::apache':
     default_vhost => false,
+    mpm_module => 'prefork',
   }
 
+  class { '::apache::mod::php': }
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
 
