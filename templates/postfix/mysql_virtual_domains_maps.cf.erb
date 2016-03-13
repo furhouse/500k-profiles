@@ -1,7 +1,7 @@
 # Managed by Puppet
 
-user = postfix
-password = Your2ndPassword
-hosts = localhost
-dbname = postfix
+user = <%= @db_user %>
+password = <%= @db_passwd %>
+hosts = <%= @db_host %>
+dbname = <%= @db_name %>
 query = SELECT domain FROM domain WHERE domain='%s' AND active = '1'

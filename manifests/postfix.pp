@@ -4,7 +4,6 @@ class profiles::postfix {
     path => '/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin',
   }
 
-  include '::mysql::server'
   class { '::mysql::server':
     root_password           => 'password',
     remove_default_accounts => true,
@@ -52,6 +51,33 @@ class profiles::postfix {
       mode    => '0644',
       content => template("${module_name}/postfixadmin-2.93_config.inc.php.erb"),
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
+    }
+    file { 'mysql_virtual_alias_maps' :
+      ensure  => file,
+      path    => '/etc/postfix/mysql_virtual_alias_maps.cf',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/postfix/mysql_virtual_alias_maps.cf.erb"),
+      require => Class['::postfix'],
+    }
+    file { 'mysql_virtual_domains_maps' :
+      ensure  => file,
+      path    => '/etc/postfix/mysql_virtual_domains_maps.cf',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/postfix/mysql_virtual_domains_maps.cf.erb"),
+      require => Class['::postfix'],
+    }
+    file { 'mysql_virtual_mailbox_maps' :
+      ensure  => file,
+      path    => '/etc/postfix/mysql_virtual_mailbox_maps.cf',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/postfix/mysql_virtual_mailbox_maps.cf.erb"),
+      require => Class['::postfix'],
     }
   }
 
