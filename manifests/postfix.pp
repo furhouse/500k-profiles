@@ -9,11 +9,36 @@ class profiles::postfix {
     remove_default_accounts => true,
   }
 
-  mysql::db { 'postfix':
-    user     => 'postfix',
-    password => 'postfixadmin',
-    host     => 'localhost',
-    grant    => ['ALL'],
+  mysql_database { 'postfix':
+    ensure => 'present',
+  }
+
+  mysql_user { 'postfix_admin@localhost':
+    ensure  => 'present',
+    require => Mysql_database['postfix'],
+  }
+
+  mysql_user { 'postfix@localhost':
+    ensure  => 'present',
+    require => Mysql_database['postfix'],
+  }
+
+  mysql_grant { 'postfix_admin@localhost/postfix.*':
+    ensure     => 'present',
+    options    => ['GRANT'],
+    privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'],
+    table      => 'postfix.*',
+    user       => 'postfix@localhost',
+    require    => Mysql_database['postfix'],
+  }
+
+  mysql_grant { 'postfix@localhost/postfix.*':
+    ensure     => 'present',
+    options    => ['GRANT'],
+    privileges => ['SELECT'],
+    table      => 'postfix.*',
+    user       => 'postfix_admin@localhost',
+    require    => Mysql_database['postfix'],
   }
 
   include '::postfix'
@@ -37,11 +62,15 @@ class profiles::postfix {
   }
 
   define postfixadmin::config (
-    $db_type   = 'mysqli',
-    $db_host   = 'localhost',
-    $db_user   = 'postfix',
-    $db_passwd = 'postfixadmin',
-    $db_name   = 'postfix'
+    $pfadb_type   = 'mysqli',
+    $pfadb_host   = 'localhost',
+    $pfadb_user   = 'postfix_admin',
+    $pfadb_passwd = 'postfixadmin',
+    $pfadb_name   = 'postfix',
+    $db_host      = 'localhost',
+    $db_user      = 'postfix',
+    $db_passwd    = 'postfixadmin',
+    $db_name      = 'postfix',
   ) {
     file { 'postfixadmin-config' :
       ensure  => file,
@@ -79,6 +108,42 @@ class profiles::postfix {
       content => template("${module_name}/postfix/mysql_virtual_mailbox_maps.cf.erb"),
       require => Class['::postfix'],
     }
+  }
+
+  class { '::apache':
+    default_vhost => false,
+  }
+
+  class { '::apache::mod::rewrite': }
+  class { '::apache::mod::ssl': }
+
+  apache::vhost { 'postfixadmin':
+    servername     => $::fqdn,
+    manage_docroot => false,
+    port           => '80',
+    docroot        => '/usr/share/postfixadmin-2.93/config.inc.php',
+    rewrites       => [
+      {
+        comment      => 'redirect to https',
+        rewrite_cond => ['%{HTTPS} off'],
+        rewrite_rule => ['(.*) https://%{HTTP_HOST}:443%{REQUEST_URI}'],
+      },
+    ],
+  }
+
+  apache::vhost { 'postfixadmin-ssl':
+    servername      => $::fqdn,
+    manage_docroot  => false,
+    ip              => '*',
+    port            => '443',
+    docroot         => '/usr/share/postfixadmin-2.93/config.inc.php',
+    default_vhost   => true,
+    ssl             => true,
+    ssl_cert        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
+    ssl_key         => '/etc/ssl/private/ssl-cert-snakeoil.key',
+    ssl_chain       => undef,
+    error_log_file  => 'postfixadmin_error.log',
+    access_log_file => 'access.log',
   }
 
   postfixadmin::config { "postfixadmin-config-${fqdn}": }
