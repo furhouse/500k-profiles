@@ -87,8 +87,8 @@ class profiles::postfix {
     }
     file { 'postfixadmin-config-symlink' :
       ensure  => file,
-      path    => '/usr/share/postfixadmin-2.93/config.inc.php',
-      target  => '/etc/postfixadmin.conf',
+      path    => '/etc/postfixadmin.conf',
+      target  => '/usr/share/postfixadmin-2.93/config.inc.php',
       owner   => 'root',
       group   => 'root',
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
