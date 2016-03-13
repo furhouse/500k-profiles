@@ -121,7 +121,7 @@ class profiles::postfix {
     servername     => $::fqdn,
     manage_docroot => false,
     port           => '80',
-    docroot        => '/usr/share/postfixadmin-2.93/config.inc.php',
+    docroot        => '/usr/share/postfixadmin-2.93',
     rewrites       => [
       {
         comment      => 'redirect to https',
@@ -136,7 +136,7 @@ class profiles::postfix {
     manage_docroot  => false,
     ip              => '*',
     port            => '443',
-    docroot         => '/usr/share/postfixadmin-2.93/config.inc.php',
+    docroot         => '/usr/share/postfixadmin-2.93',
     default_vhost   => true,
     ssl             => true,
     ssl_cert        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
