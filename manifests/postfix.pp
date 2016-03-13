@@ -28,7 +28,7 @@ class profiles::postfix {
     options    => ['GRANT'],
     privileges => ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'],
     table      => 'postfix.*',
-    user       => 'postfix@localhost',
+    user       => 'postfix_admin@localhost',
     require    => Mysql_database['postfix'],
   }
 
@@ -37,7 +37,7 @@ class profiles::postfix {
     options    => ['GRANT'],
     privileges => ['SELECT'],
     table      => 'postfix.*',
-    user       => 'postfix_admin@localhost',
+    user       => 'postfix@localhost',
     require    => Mysql_database['postfix'],
   }
 
