@@ -86,7 +86,7 @@ class profiles::postfix {
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
     }
     file { 'postfixadmin-config-symlink' :
-      ensure  => file,
+      ensure  => link,
       path    => '/etc/postfixadmin.conf',
       target  => '/usr/share/postfixadmin-2.93/config.inc.php',
       owner   => 'root',
@@ -94,7 +94,7 @@ class profiles::postfix {
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
     }
     file { 'postfixadmin-templates_c' :
-      ensure  => link,
+      ensure  => directory,
       path    => '/usr/share/postfixadmin-2.93/templates_c',
       owner   => 'root',
       group   => 'www-data',
