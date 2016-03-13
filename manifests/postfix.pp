@@ -85,6 +85,22 @@ class profiles::postfix {
       content => template("${module_name}/postfixadmin-2.93_config.inc.php.erb"),
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
     }
+    file { 'postfixadmin-config-symlink' :
+      ensure  => file,
+      path    => '/usr/share/postfixadmin-2.93/config.inc.php',
+      target  => '/etc/postfixadmin.conf',
+      owner   => 'root',
+      group   => 'root',
+      require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
+    }
+    file { 'postfixadmin-templates_c' :
+      ensure  => link,
+      path    => '/usr/share/postfixadmin-2.93/templates_c',
+      owner   => 'root',
+      group   => 'www-data',
+      mode    => '775',
+      require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
+    }
     file { 'mysql_virtual_alias_maps' :
       ensure  => file,
       path    => '/etc/postfix/mysql_virtual_alias_maps.cf',
@@ -131,7 +147,7 @@ class profiles::postfix {
 
   exec { 'enable-php5-imap':
     command => 'php5enmod imap',
-    require => Package['$phppackages'],
+    require => Package['php5-imap'],
     notify  => Class['::apache'],
   }
 
