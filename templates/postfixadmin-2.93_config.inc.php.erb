@@ -1,33 +1,33 @@
 <?php
-/** 
- * Postfix Admin 
- * 
- * LICENSE 
- * This source file is subject to the GPL license that is bundled with  
- * this package in the file LICENSE.TXT. 
- * 
- * Further details on the project are available at http://postfixadmin.sf.net 
- * 
- * @version $Id: config.inc.php 1796 2015-09-07 21:12:46Z christian_boltz $ 
- * @license GNU GPL v2 or later. 
- * 
+/**
+ * Postfix Admin
+ *
+ * LICENSE
+ * This source file is subject to the GPL license that is bundled with
+ * this package in the file LICENSE.TXT.
+ *
+ * Further details on the project are available at http://postfixadmin.sf.net
+ *
+ * @version $Id: config.inc.php 1796 2015-09-07 21:12:46Z christian_boltz $
+ * @license GNU GPL v2 or later.
+ *
  * File: config.inc.php
  * Contains configuration options.
  */
 
 /*****************************************************************
- *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+ *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * You have to set $CONF['configured'] = true; before the
  * application will run!
  * Doing this implies you have changed this file as required.
  * i.e. configuring database etc; specifying setup.php password etc.
  */
-$CONF['configured'] = false;
+$CONF['configured'] = '<%= @configured %>';
 
 // In order to setup Postfixadmin, you MUST specify a hashed password here.
 // To create the hash, visit setup.php in a browser and type a password into the field,
 // on submission it will be echoed out to you as a hashed value.
-$CONF['setup_password'] = 'changeme';
+$CONF['setup_password'] = '<%= @setup_password %>';
 
 // Language config
 // Language files are located in './languages', change as required..
@@ -39,18 +39,18 @@ $CONF['language_hook'] = '';
 
 /*
     language_hook example function
- 
+
     Called if $CONF['language_hook'] == '<name_of_the_function>'
     Allows to add or override $PALANG interface texts.
 
-    If you add new texts, please always prefix them with 'x_' (for example 
+    If you add new texts, please always prefix them with 'x_' (for example
     $PALANG['x_mytext'] = 'foo') to avoid they clash with texts that might be
     added to languages/*.lang in future versions of PostfixAdmin.
 
     Please also make sure that all your added texts are included in all
     sections - that includes all 'case "XY":' sections and the 'default:'
     section (for users that don't have any of the languages specified
-    in the 'case "XY":' section). 
+    in the 'case "XY":' section).
     Usually the 'default:' section should contain english text.
 
     If you modify an existing text/translation, please consider to report it
@@ -197,13 +197,13 @@ $CONF['default_aliases'] = array (
 //   NO:  /usr/local/virtual/username@domain.tld
 $CONF['domain_path'] = 'YES';
 // If you don't want to have the domain in your mailbox set this to 'NO'.
-// Examples: 
+// Examples:
 //   YES: /usr/local/virtual/domain.tld/username@domain.tld
 //   NO:  /usr/local/virtual/domain.tld/username
 // Note: If $CONF['domain_path'] is set to NO, this setting will be forced to YES.
 $CONF['domain_in_mailbox'] = 'NO';
 // If you want to define your own function to generate a maildir path set this to the name of the function.
-// Notes: 
+// Notes:
 //   - this configuration directive will override both domain_path and domain_in_mailbox
 //   - the maildir_name_hook() function example is present below, commented out
 //   - if the function does not exist the program will default to the above domain_path and domain_in_mailbox settings
@@ -211,7 +211,7 @@ $CONF['maildir_name_hook'] = 'NO';
 
 /*
     maildir_name_hook example function
- 
+
     Called when creating a mailbox if $CONF['maildir_name_hook'] == '<name_of_the_function>'
     - allows for customized maildir paths determined by a custom function
     - the example below will prepend a single-character directory to the
@@ -232,11 +232,11 @@ function maildir_name_hook($domain, $user) {
 }
 */
 
-/*  
+/*
     *_struct_hook - change, add or remove fields
 
     If you need additional fields or want to change or remove existing fields,
-    you can write a hook function to modify $struct in the *Handler classes. 
+    you can write a hook function to modify $struct in the *Handler classes.
 
     The edit form will automatically be updated according to the modified
     $struct. The list page is not yet updated automatically.
@@ -244,18 +244,18 @@ function maildir_name_hook($domain, $user) {
     You can define one hook function per class, named like the primary database
     table of that class.
     The hook function is called with $struct as parameter and must return the
-    modified $struct. 
+    modified $struct.
 
     Note: Adding a field to $struct adds the handling of this field in
     PostfixAdmin, but it does not create it in the database. You have to do
-    that yourself. 
+    that yourself.
     Please follow the naming policy for custom database fields and tables on
     http://sourceforge.net/apps/mediawiki/postfixadmin/index.php?title=Custom_fields
     to avoid clashes with future versions of PostfixAdmin.
 
     See initStruct() in the *Handler class for the default $struct.
     See pacol() in functions.inc.php for the available flags on each column.
-    
+
     Example:
 
     function x_struct_admin_modify($struct) {
@@ -332,8 +332,8 @@ $CONF['vacation_control_admin'] = 'YES';
 // ReplyType options
 // If you want to define additional reply options put them in array below.
 // The array has the format   seconds between replies => $PALANG text
-// Special values for seconds are: 
-// 0 => only reply to the first mail while on vacation 
+// Special values for seconds are:
+// 0 => only reply to the first mail while on vacation
 // 1 => reply on every mail
 $CONF['vacation_choice_of_reply'] = array (
    0 => 'reply_once',        // Sends only Once the message during Out of Office
@@ -370,7 +370,7 @@ $CONF['special_alias_control'] = 'NO';
 $CONF['alias_goto_limit'] = '0';
 
 // Alias Domains
-// Alias domains allow to "mirror" aliases and mailboxes to another domain. This makes 
+// Alias domains allow to "mirror" aliases and mailboxes to another domain. This makes
 // configuration easier if you need the same set of aliases on multiple domains, but
 // also requires postfix to do more database queries.
 // Note: If you update from 2.2.x or earlier, you will have to update your postfix configuration.
@@ -566,8 +566,8 @@ $CONF['theme_custom_css'] = '';
 //  change to boolean true to enable xmlrpc
 $CONF['xmlrpc_enabled'] = false;
 
-// If you want to keep most settings at default values and/or want to ensure 
-// that future updates work without problems, you can use a separate config 
+// If you want to keep most settings at default values and/or want to ensure
+// that future updates work without problems, you can use a separate config
 // file (config.local.php) instead of editing this file and override some
 // settings there.
 if (file_exists(dirname(__FILE__) . '/config.local.php')) {

@@ -14,13 +14,15 @@ class profiles::postfix {
   }
 
   mysql_user { 'postfix_admin@localhost':
-    ensure  => 'present',
-    require => Mysql_database['postfix'],
+    ensure        => 'present',
+    password_hash => '*9D3B5B8CAC5F6EEF085657AF20D0723FC5816F81',
+    require       => Mysql_database['postfix'],
   }
 
   mysql_user { 'postfix@localhost':
-    ensure  => 'present',
-    require => Mysql_database['postfix'],
+    ensure        => 'present',
+    password_hash => '*33E0762B574AF0FEB01F6B5410648D3C62C6C017',
+    require       => Mysql_database['postfix'],
   }
 
   mysql_grant { 'postfix_admin@localhost/postfix.*':
@@ -62,15 +64,17 @@ class profiles::postfix {
   }
 
   define postfixadmin::config (
-    $pfadb_type   = 'mysqli',
-    $pfadb_host   = 'localhost',
-    $pfadb_user   = 'postfix_admin',
-    $pfadb_passwd = 'postfixadmin',
-    $pfadb_name   = 'postfix',
-    $db_host      = 'localhost',
-    $db_user      = 'postfix',
-    $db_passwd    = 'postfixadmin',
-    $db_name      = 'postfix',
+    $configured     = 'true',
+    $setup_password = '$6$190U5C5KEPx/$IYHGCVWTBPDQ9RgQdDE0yY2jAnFhGPsKbphKPm8BZW0.NGJjXe8A5T9.hPgNa57ku1Jo0PL9GKJPcfNHZdAV.0',
+    $pfadb_type     = 'mysqli',
+    $pfadb_host     = 'localhost',
+    $pfadb_user     = 'postfix_admin',
+    $pfadb_passwd   = 'postfixadmin',
+    $pfadb_name     = 'postfix',
+    $db_host        = 'localhost',
+    $db_user        = 'postfix',
+    $db_passwd      = 'postfixadmin',
+    $db_name        = 'postfix',
   ) {
     file { 'postfixadmin-config' :
       ensure  => file,
@@ -112,12 +116,24 @@ class profiles::postfix {
 
   class { '::apache':
     default_vhost => false,
-    mpm_module => 'prefork',
+    mpm_module    => 'prefork',
   }
 
   class { '::apache::mod::php': }
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
+
+  $phppackages = [ 'php5-mysql', 'php5-imap' ]
+
+  package { $phppackages:
+    ensure => installed,
+  }
+
+  exec { 'enable-php5-imap':
+    command => 'php5enmod imap',
+    require => Package['$phppackages'],
+    notify  => Class['::apache'],
+  }
 
   apache::vhost { 'postfixadmin':
     servername     => $::fqdn,
