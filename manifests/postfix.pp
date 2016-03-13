@@ -4,7 +4,20 @@ class profiles::postfix {
     path => '/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin',
   }
 
-  include ::postfix
+  include '::mysql::server'
+  class { '::mysql::server':
+    root_password           => 'password',
+    remove_default_accounts => true,
+  }
+
+  mysql::db { 'postfix':
+    user     => 'postfix',
+    password => 'postfixadmin',
+    host     => 'localhost',
+    grant    => ['ALL'],
+  }
+
+  include '::postfix'
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
     'smtp_tls_security_level':          value => 'secure';
@@ -16,10 +29,12 @@ class profiles::postfix {
     'disable_vrfy_command':             value => 'yes';
   }
 
-  include ::staging
+  include '::staging'
   staging::deploy { 'postfixadmin-2.93.tar.gz':
     source => "puppet:///modules/${module_name}/postfixadmin-2.93.tar.gz",
     target => '/usr/share',
+    user   => 'root',
+    group  => 'root',
   }
 
   define postfixadmin::config (
@@ -36,7 +51,7 @@ class profiles::postfix {
       group   => 'root',
       mode    => '0644',
       content => template("${module_name}/postfixadmin-2.93_config.inc.php.erb"),
-      require => Class['staging::deploy'],
+      require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
     }
   }
 
