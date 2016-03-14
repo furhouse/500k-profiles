@@ -65,7 +65,7 @@ class profiles::postfix {
 
   define postfixadmin::config (
     $configured     = 'true',
-    $setup_password = '$6$190U5C5KEPx/$IYHGCVWTBPDQ9RgQdDE0yY2jAnFhGPsKbphKPm8BZW0.NGJjXe8A5T9.hPgNa57ku1Jo0PL9GKJPcfNHZdAV.0',
+    $setup_password = 'd2759790f5aa92d5563bea1342693391:be50dcd12c3b2ac8c120ac1d67f64d891fa31ec8',
     $pfadb_type     = 'mysqli',
     $pfadb_host     = 'localhost',
     $pfadb_user     = 'postfix_admin',
