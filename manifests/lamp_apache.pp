@@ -1,7 +1,7 @@
 class profiles::lamp_apache {
   # Hiera lookups
-  $apache_port = hiera('profiles::apache::apache_port', '80')
-  $apache_docroot = hiera('profiles::apache::apache_docroot', '/var/www/vhost')
+  $apache_port = hiera('profiles::lamp_apache::apache_port', '80')
+  $apache_docroot = hiera('profiles::lamp_apache::apache_docroot', '/var/www/vhost')
 
   class { '::apache': 
     mpm_module => 'prefork',
