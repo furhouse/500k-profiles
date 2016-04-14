@@ -3,7 +3,10 @@ class profiles::lamp_apache {
   $apache_port = hiera('profiles::apache::apache_port', '80')
   $apache_docroot = hiera('profiles::apache::apache_docroot', '/var/www/vhost')
 
-  class { 'apache': }
+  class { '::apache': 
+    mpm_module => 'prefork',
+  }
+
   include apache::mod::php
 
   apache::vhost { 'vhost.example.com':
