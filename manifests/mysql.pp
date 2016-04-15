@@ -1,6 +1,8 @@
 class profiles::mysql(
-  Hash $databases = [],
 ) {
+  $databases = hiera_hash('profiles::mysql::databases')
+  
+  notify{"$databases":}
   
   $mysql_root_password = hiera('profiles::mysql::mysql_root_password', 'somepassword')
   
