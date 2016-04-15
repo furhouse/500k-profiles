@@ -1,17 +1,20 @@
 class profiles::lamp_apache {
   
   $apache_port = hiera('profiles::lamp_apache::apache_port', '80')
-  $apache_docroot = hiera('profiles::lamp_apache::apache_docroot', '/var/www/vhost')
-
+ 
   class { '::apache': 
     mpm_module => 'prefork',
   }
 
   include apache::mod::php
+  
+  include wordpress
 
-  apache::vhost { 'vhost.example.com':
+  apache::vhost { 'localhost':
     port    => $apache_port,
-    docroot => $apache_docroot,
+    docroot => "${::wordpress::install_dir}/wordpress",
+    manage_docroot => false,
+    require => Class['wordpress'],
   }
 
 }
