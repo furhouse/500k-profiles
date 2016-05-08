@@ -147,7 +147,7 @@ class profiles::postfix {
 
   exec { 'enable-php5-imap':
     command => 'php5enmod imap',
-    unless  => 'php -m | grep imap'
+    unless  => 'php -m | grep imap',
     require => Package['php5-imap'],
     notify  => Class['::apache'],
   }
