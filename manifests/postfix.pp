@@ -98,7 +98,7 @@ class profiles::postfix {
       path    => '/usr/share/postfixadmin-2.93/templates_c',
       owner   => 'root',
       group   => 'www-data',
-      mode    => '775',
+      mode    => '0775',
       require => Staging::Deploy['postfixadmin-2.93.tar.gz'],
     }
     file { 'mysql_virtual_alias_maps' :
@@ -147,6 +147,7 @@ class profiles::postfix {
 
   exec { 'enable-php5-imap':
     command => 'php5enmod imap',
+    unless  => 'php -m | grep imap'
     require => Package['php5-imap'],
     notify  => Class['::apache'],
   }
