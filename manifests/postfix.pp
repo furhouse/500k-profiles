@@ -1,3 +1,9 @@
+# Almost completely sets up postfixadmin 2.93.
+# Todo:
+# - generate superpassword hash with profile
+# - curl https://${::fqdn}/setup.php & verify
+# - add admin with profile
+
 class profiles::postfix {
 
   Exec {
@@ -64,8 +70,8 @@ class profiles::postfix {
   }
 
   define postfixadmin::config (
-    $configured     = 'true',
-    $setup_password = '08c6d109078507ef572538372ba2d3e8:29ef53109b4b5d9336903da5d0ba5a463f65b097',
+    $configured     = true,
+    $setup_password = hiera('postfixadmin::setup_pass', 'undef'),
     $pfadb_type     = 'mysqli',
     $pfadb_host     = 'localhost',
     $pfadb_user     = 'postfix_admin',
