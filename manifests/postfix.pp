@@ -13,6 +13,7 @@ class profiles::postfix {
   class { '::mysql::server':
     root_password           => 'password',
     remove_default_accounts => true,
+    package_name            => 'mysql-server-5.6',
   }
 
   mysql_database { 'postfix':
@@ -153,9 +154,8 @@ class profiles::postfix {
 
   exec { 'enable-php5-imap':
     command => 'php5enmod imap',
+    require => [ Package['php5-imap'], Class['::apache::mod::php'] ],
     unless  => 'php -m | grep imap',
-    require => Package['php5-imap'],
-    notify  => Class['::apache'],
   }
 
   apache::vhost { 'postfixadmin':
