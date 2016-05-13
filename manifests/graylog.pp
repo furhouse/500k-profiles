@@ -38,6 +38,7 @@ class profiles::graylog {
     config          => {
       'password_secret'          => hiera('graylog::pass', undef),
       'root_password_sha2'       => hiera('graylog::sha2', undef),
+      'root_timezone'            => 'Europe/Amsterdam',
       'versionchecks'            => false,
       'usage_statistics_enabled' => false,
       'rest_listen_uri'          => 'http://0.0.0.0:12900/',
