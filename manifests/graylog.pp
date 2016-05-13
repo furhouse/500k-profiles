@@ -1,5 +1,9 @@
 class profiles::graylog {
 
+  class { '::java':
+    distribution => 'jre',
+  }
+
   class { '::mongodb::globals':
     manage_package_repo => true,
   }->
@@ -11,6 +15,7 @@ class profiles::graylog {
     version      => '2.3.2',
     repo_version => '2.x',
     manage_repo  => true,
+    require      => Class['::java'],
   }->
   elasticsearch::instance { 'graylog':
     config => {
@@ -28,5 +33,6 @@ class profiles::graylog {
       'password_secret'    => hiera('graylog::pass', undef),
       'root_password_sha2' => hiera('graylog::sha2', undef),
     },
+    require => Class['::java'],
   }
 }
