@@ -1,11 +1,18 @@
 class profiles::graylog {
 
+  apt::ppa { 'ppa:openjdk-r/ppa': }
+
   class { '::java':
     distribution => 'jre',
+    package      => 'openjdk-8-jre',
+    version      => 'present',
   }
+
+  Apt::Ppa['ppa:openjdk-r/ppa'] -> Class['apt::update'] -> Class['::java']
 
   class { '::mongodb::globals':
     manage_package_repo => true,
+    require             => Class['apt::update'],
   }->
   class { '::mongodb::server':
     bind_ip => ['127.0.0.1'],
@@ -15,7 +22,6 @@ class profiles::graylog {
     version      => '2.3.2',
     repo_version => '2.x',
     manage_repo  => true,
-    require      => Class['::java'],
   }->
   elasticsearch::instance { 'graylog':
     config => {
@@ -30,9 +36,12 @@ class profiles::graylog {
   class { '::graylog::server':
     package_version => '2.0.0-5',
     config          => {
-      'password_secret'    => hiera('graylog::pass', undef),
-      'root_password_sha2' => hiera('graylog::sha2', undef),
+      'password_secret'          => hiera('graylog::pass', undef),
+      'root_password_sha2'       => hiera('graylog::sha2', undef),
+      'versionchecks'            => false,
+      'usage_statistics_enabled' => false,
+      'rest_listen_uri'          => 'http://0.0.0.0:12900/',
+      'web_listen_uri'           => 'http://0.0.0.0:9000/',
     },
-    require => Class['::java'],
   }
 }
