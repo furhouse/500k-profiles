@@ -1,6 +1,8 @@
 class profiles::graylog {
 
-  apt::ppa { 'ppa:openjdk-r/ppa': }
+  apt::ppa { 'ppa:openjdk-r/ppa':
+    package_manage => true,
+  }
 
   class { '::java':
     distribution => 'jre',
