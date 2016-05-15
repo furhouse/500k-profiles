@@ -6,10 +6,10 @@ class profiles::base {
 
   package { $packages: }
 
-  # class { 'apt':
-    # update => {
-      # frequency => 'daily',
-    # },
-  # }
+  group { 'sudo':
+    ensure  => present,
+    gid     => '27',
+    require => Class['::sudo'],
+  }
 
 }
