@@ -12,7 +12,7 @@ class profiles::zabbixsrv {
   }
 
   class { '::zabbix':
-    zabbix_url    => "zabbix.${::fqdn}",
+    zabbix_url    => "${::fqdn}",
     database_type => 'mysql',
   }
 
