@@ -4,7 +4,7 @@ class profiles::bind {
   $bindacl  = hiera('profiles::bind::bindacl')
   $bindzone = hiera('profiles::bind::bindzone')
   $bindview = hiera('profiles::bind::bindview')
-  $bindrr   = hiera('profiles::bind::bindrr')
+  $bindrr   = hiera('profiles::bind::bindrr', undef)
 
   contain '::bind'
 
@@ -23,6 +23,7 @@ class profiles::bind {
     'require' => Package['bind'],
   }
 
-  create_resources('resource_record', $bindrr, $defaults)
-
+  if $bindrr {
+    create_resources('resource_record', $bindrr, $defaults)
+  }
 }
