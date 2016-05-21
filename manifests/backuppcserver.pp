@@ -62,6 +62,10 @@ class profiles::backuppcserver inherits ::backuppc::params {
     ],
   }
 
+  package { 'nfs-common':
+    ensure  => present,
+  }
+
   package { 'apache2-utils':
     ensure  => present,
   }
