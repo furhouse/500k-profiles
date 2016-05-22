@@ -61,6 +61,9 @@ class profiles::postfix {
     'mydestination':                    value => '*';
     'smtpd_recipient_restrictions':     value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
     'disable_vrfy_command':             value => 'yes';
+    'smtp_tls_security_level':          value => 'encrypt';
+    'myhostname':                       value => "${::fqdn}";
+    'master_smtp':                      value => 'smtp inet n - n - - smtpd';
   }
 
   include '::staging'
