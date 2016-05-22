@@ -53,7 +53,7 @@ class profiles::postfix {
   include '::postfix'
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
-    'smtp_tls_security_level':          value => 'secure';
+    'smtp_tls_security_level':          value => 'encrypt';
     'smtp_tls_CAfile':                  value => '/etc/ssl/certs/ca-certificates.crt';
     'smtp_tls_session_cache_database':  value => 'btree:${data_directory}/smtp_tls_session_cache';
     'inet_protocols':                   value => 'ipv4';
@@ -61,7 +61,6 @@ class profiles::postfix {
     'mydestination':                    value => '*';
     'smtpd_recipient_restrictions':     value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
     'disable_vrfy_command':             value => 'yes';
-    'smtp_tls_security_level':          value => 'encrypt';
     'myhostname':                       value => "${::fqdn}";
     'master_smtp':                      value => 'smtp inet n - n - - smtpd';
   }
