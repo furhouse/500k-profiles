@@ -12,10 +12,11 @@ class profiles::zabbixsrv {
   }
 
   class { '::zabbix':
-    zabbix_url     => "${::fqdn}",
-    database_type  => 'mysql',
-    default_vhost  => true,
-    apache_use_ssl => true,
+    zabbix_url       => "${::fqdn}",
+    database_type    => 'mysql',
+    default_vhost    => true,
+    apache_use_ssl   => true,
+    startdiscoverers => '10',
   }
 
 }

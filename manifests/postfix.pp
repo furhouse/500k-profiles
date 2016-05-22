@@ -50,7 +50,9 @@ class profiles::postfix {
     require    => Mysql_database['postfix'],
   }
 
-  include '::postfix'
+  class { '::postfix':
+    master_smtp => 'smtp inet n - n - - smtpd',
+  }
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
     'smtp_tls_security_level':          value => 'encrypt';
@@ -62,7 +64,8 @@ class profiles::postfix {
     'smtpd_recipient_restrictions':     value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
     'disable_vrfy_command':             value => 'yes';
     'myhostname':                       value => "${::fqdn}";
-    'master_smtp':                      value => 'smtp inet n - n - - smtpd';
+    'non_smtpd_milters':                value => 'inet:127.0.0.1:8891';
+    'smtpd_milters':                    value => 'inet:127.0.0.1:8891';
   }
 
   include '::staging'
@@ -191,5 +194,15 @@ class profiles::postfix {
   }
 
   postfixadmin::config { "postfixadmin-config-${fqdn}": }
+
+  $dkimdomain  = hiera_hash('dkim::domain', {})
+  $dkimtrusted = hiera_hash('dkim::trusted', {})
+  include '::opendkim'
+  if $dkimdomain {
+    create_resources('opendkim::domain', $dkimdomain)
+  }
+  if $dkimtrusted {
+    create_resources('opendkim::trusted', $dkimtrusted)
+  }
 
 }
