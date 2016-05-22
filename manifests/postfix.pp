@@ -54,6 +54,7 @@ class profiles::postfix {
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
     'smtp_tls_security_level':          value => 'secure';
+    'smtp_tls_CAfile':                  value => '/etc/ssl/certs/ca-certificates.crt';
     'smtp_tls_session_cache_database':  value => 'btree:${data_directory}/smtp_tls_session_cache';
     'inet_protocols':                   value => 'ipv4';
     'relay_domains':                    value => '*';
