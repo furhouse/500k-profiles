@@ -54,19 +54,30 @@ class profiles::postfix {
     master_smtp => 'smtp inet n - n - - smtpd',
   }
   postfix::config {
-    'smtp_tls_mandatory_ciphers':       value => 'high';
-    'smtp_tls_security_level':          value => 'encrypt';
-    'smtp_tls_CAfile':                  value => '/etc/ssl/certs/ca-certificates.crt';
-    'smtp_tls_session_cache_database':  value => 'btree:${data_directory}/smtp_tls_session_cache';
-    'inet_protocols':                   value => 'ipv4';
-    'relay_domains':                    value => '*';
-    'mydestination':                    value => '*';
-    'smtpd_recipient_restrictions':     value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
-    'disable_vrfy_command':             value => 'yes';
-    'myhostname':                       value => "${::fqdn}";
-    'non_smtpd_milters':                value => 'inet:127.0.0.1:8891';
-    'smtpd_milters':                    value => 'inet:127.0.0.1:8891';
+    'smtp_tls_mandatory_ciphers':      value => 'high';
+    'smtp_tls_security_level':         value => 'encrypt';
+    'smtp_tls_CAfile':                 value => '/etc/ssl/certs/ca-certificates.crt';
+    'smtp_tls_session_cache_database': value => 'btree:${data_directory}/smtp_tls_session_cache';
+    'inet_protocols':                  value => 'ipv4';
+    'relay_domains':                   value => '*';
+    'mydestination':                   value => '*';
+    'smtpd_recipient_restrictions':    value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
+    'disable_vrfy_command':            value => 'yes';
+    'myhostname':                      value => "${::fqdn}";
+    'non_smtpd_milters':               value => 'inet:127.0.0.1:8891';
+    'smtpd_milters':                   value => 'inet:127.0.0.1:8891';
+    'smtpd_sasl_type':                 value => 'dovecot';
+    'smtpd_sasl_path':                 value => '/var/run/dovecot/auth-client';
+    'smtpd_sasl_auth_enable':          value => 'yes';
+    'virtual_mailbox_base':            value => '/srv/vmail';
+    'virtual_mailbox_maps':            value => 'mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf';
+    'virtual_alias_maps':              value => 'mysql:/etc/postfix/mysql_virtual_alias_maps.cf';
+    'virtual_mailbox_domains':         value => 'mysql:/etc/postfix/mysql_virtual_domains_maps.cf';
+    'virtual_uid_maps':                value => 'static:6000';
+    'virtual_gid_maps':                value => 'static:6000';
+    'virtual_transport':               value => 'lmtp:unix:private/dovecot-lmtp';
   }
+
 
   include '::staging'
   staging::deploy { 'postfixadmin-2.93.tar.gz':
@@ -78,16 +89,16 @@ class profiles::postfix {
 
   define postfixadmin::config (
     $configured     = true,
-    $setup_password = hiera('postfixadmin::setup_pass', 'undef'),
+    $setup_password = hiera('postfixadmin::pfasetup_pass', 'undef'),
     $pfadb_type     = 'mysqli',
-    $pfadb_host     = 'localhost',
-    $pfadb_user     = 'postfix_admin',
-    $pfadb_passwd   = 'postfixadmin',
-    $pfadb_name     = 'postfix',
-    $db_host        = 'localhost',
-    $db_user        = 'postfix',
-    $db_passwd      = 'postfixadmin',
-    $db_name        = 'postfix',
+    $pfadb_host     = hiera('postfixadmin::pfadb_host', 'undef'),
+    $pfadb_user     = hiera('postfixadmin::pfadb_user', 'undef'),
+    $pfadb_passwd   = hiera('postfixadmin::pfadb_passwd', 'undef'),
+    $pfadb_name     = hiera('postfixadmin::pfadb_name', 'undef'),
+    $db_host        = hiera('postfix::db_name', 'undef'),
+    $db_user        = hiera('postfix::db_name', 'undef'),
+    $db_passwd      = hiera('postfix::db_name', 'undef'),
+    $db_name        = hiera('postfix::db_name', 'undef'),
   ) {
     file { 'postfixadmin-config' :
       ensure  => file,
@@ -152,7 +163,7 @@ class profiles::postfix {
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
 
-  $phppackages = [ 'php5-mysql', 'php5-imap' ]
+  $phppackages = [ 'php5-mysql', 'php5-imap', 'postfix-mysql'  ]
 
   package { $phppackages:
     ensure => installed,
@@ -194,6 +205,31 @@ class profiles::postfix {
   }
 
   postfixadmin::config { "postfixadmin-config-${fqdn}": }
+
+  include dovecot
+
+  class { dovecot::mail:
+    gid             => 6000,
+    uid             => 6000,
+    first_valid_uid => 6000,
+    first_valid_gid => 6000,
+    last_valid_uid  => 6000,
+    last_valid_gid  => 6000,
+  }
+
+  include dovecot::imap
+  include dovecot::base
+  include dovecot::auth
+
+  class { dovecot::master:
+    postfix => yes,
+  }
+
+  class { dovecot::mysql:
+    dbname     => 'postfix',
+    dbusername => 'postfix',
+    dbpassword => 'postfixadmin',
+  }
 
   $dkimdomain  = hiera_hash('dkim::domain', {})
   $dkimtrusted = hiera_hash('dkim::trusted', {})
