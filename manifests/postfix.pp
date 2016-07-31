@@ -55,7 +55,7 @@ class profiles::postfix {
   }
   postfix::config {
     'smtp_tls_mandatory_ciphers':      value => 'high';
-    'smtp_tls_security_level':         value => 'encrypt';
+    'smtp_tls_security_level':         value => 'may';
     'smtp_tls_CAfile':                 value => '/etc/ssl/certs/ca-certificates.crt';
     'smtp_tls_session_cache_database': value => 'btree:${data_directory}/smtp_tls_session_cache';
     'inet_protocols':                  value => 'ipv4';
@@ -67,7 +67,7 @@ class profiles::postfix {
     'non_smtpd_milters':               value => 'inet:127.0.0.1:8891';
     'smtpd_milters':                   value => 'inet:127.0.0.1:8891';
     'smtpd_sasl_type':                 value => 'dovecot';
-    'smtpd_sasl_path':                 value => '/var/run/dovecot/auth-client';
+    'smtpd_sasl_path':                 value => 'private/auth';
     'smtpd_sasl_auth_enable':          value => 'yes';
     'virtual_mailbox_base':            value => '/srv/vmail';
     'virtual_mailbox_maps':            value => 'mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf';
@@ -95,9 +95,9 @@ class profiles::postfix {
     $pfadb_user     = hiera('postfixadmin::pfadb_user', 'undef'),
     $pfadb_passwd   = hiera('postfixadmin::pfadb_passwd', 'undef'),
     $pfadb_name     = hiera('postfixadmin::pfadb_name', 'undef'),
-    $db_host        = hiera('postfix::db_name', 'undef'),
-    $db_user        = hiera('postfix::db_name', 'undef'),
-    $db_passwd      = hiera('postfix::db_name', 'undef'),
+    $db_host        = hiera('postfix::db_host', 'undef'),
+    $db_user        = hiera('postfix::db_user', 'undef'),
+    $db_passwd      = hiera('postfix::db_passwd', 'undef'),
     $db_name        = hiera('postfix::db_name', 'undef'),
   ) {
     file { 'postfixadmin-config' :
@@ -163,9 +163,9 @@ class profiles::postfix {
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
 
-  $phppackages = [ 'php5-mysql', 'php5-imap', 'postfix-mysql'  ]
+  $packages = [ 'php5-mysql', 'php5-imap', 'postfix-mysql', 'dovecot-lmtpd' ]
 
-  package { $phppackages:
+  package { $packages:
     ensure => installed,
   }
 
@@ -217,18 +217,26 @@ class profiles::postfix {
     last_valid_gid  => 6000,
   }
 
+  class { dovecot::auth:
+    disable_plaintext_auth => 'yes',
+  }
+
+  class { dovecot::base:
+    protocols => 'imap lmtp',
+  }
+
   include dovecot::imap
-  include dovecot::base
-  include dovecot::auth
+  #include dovecot::auth
 
   class { dovecot::master:
-    postfix => yes,
+    postfix          => true,
+    auth_worker_user => 'vmail',
   }
 
   class { dovecot::mysql:
-    dbname     => 'postfix',
-    dbusername => 'postfix',
-    dbpassword => 'postfixadmin',
+    dbname     => hiera('postfix::db_name', 'undef'),
+    dbusername => hiera('postfix::db_user', 'undef'),
+    dbpassword => hiera('postfix::db_passwd', 'undef'),
   }
 
   $dkimdomain  = hiera_hash('dkim::domain', {})

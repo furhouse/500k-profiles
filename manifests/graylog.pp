@@ -28,7 +28,6 @@ class profiles::graylog {
   elasticsearch::instance { 'graylog':
     config => {
       'cluster.name' => 'graylog',
-      'network.host' => '0.0.0.0',
     },
   }
   elasticsearch::plugin {'lmenezes/elasticsearch-kopf':
