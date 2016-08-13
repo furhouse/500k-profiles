@@ -225,7 +225,7 @@ class profiles::postfix {
 
   class { dovecot::auth:
     disable_plaintext_auth => 'yes',
-    auth_username_format   => '%Ln',
+    auth_username_format   => '%Lu',
   }
 
   class { dovecot::base:
