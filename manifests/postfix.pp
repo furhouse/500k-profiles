@@ -66,7 +66,7 @@ class profiles::postfix {
     'inet_protocols':                  value => 'ipv4';
     'relay_domains':                   value => '*';
     'mydestination':                   value => 'localhost';
-    'mynetworks':                      value => "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${::ec2_public_ipv4}";
+    'mynetworks':                      value => "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${::ec2_public_ipv4}/32";
     'smtpd_recipient_restrictions':    value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
     'disable_vrfy_command':            value => 'yes';
     'myhostname':                      value => "${::fqdn}";
