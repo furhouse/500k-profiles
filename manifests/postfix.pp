@@ -58,16 +58,22 @@ class profiles::postfix {
     'smtp_tls_security_level':         value => 'may';
     'smtp_tls_CAfile':                 value => '/etc/ssl/certs/ca-certificates.crt';
     'smtp_tls_session_cache_database': value => 'btree:${data_directory}/smtp_tls_session_cache';
+    'smtpd_tls_security_level':        value => 'may';
+    'smtpd_tls_auth_only':             value => 'yes';
+    'smtpd_tls_ciphers':               value => 'high';
+    'smtpd_tls_loglevel':              value => '1';
+    'smtpd_tls_ask_ccert':             value => 'yes';
     'inet_protocols':                  value => 'ipv4';
     'relay_domains':                   value => '*';
-    'mydestination':                   value => '*';
+    'mydestination':                   value => 'localhost';
+    'mynetworks':                      value => "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${::ec2_public_ipv4}";
     'smtpd_recipient_restrictions':    value => 'permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination';
     'disable_vrfy_command':            value => 'yes';
     'myhostname':                      value => "${::fqdn}";
     'non_smtpd_milters':               value => 'inet:127.0.0.1:8891';
     'smtpd_milters':                   value => 'inet:127.0.0.1:8891';
     'smtpd_sasl_type':                 value => 'dovecot';
-    'smtpd_sasl_path':                 value => 'private/auth';
+    'smtpd_sasl_path':                 value => '/var/spool/postfix/private/auth';
     'smtpd_sasl_auth_enable':          value => 'yes';
     'virtual_mailbox_base':            value => '/srv/vmail';
     'virtual_mailbox_maps':            value => 'mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf';
@@ -226,7 +232,6 @@ class profiles::postfix {
   }
 
   include dovecot::imap
-  #include dovecot::auth
 
   class { dovecot::master:
     postfix          => true,
