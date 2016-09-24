@@ -16,6 +16,20 @@ class profiles::mailserverfrontend {
     unless  => 'php -m | grep imap',
   }
 
+  class { 'roundcube':
+    imap_host   => 'ssl://localhost',
+    imap_port   => 993,
+    db_type     => 'mysql',
+    db_name     => hiera('rcdbname', 'undef'),
+    db_host     => hiera('rcdbhost', 'undef'),
+    db_username => hiera('rcdbuser', 'undef'),
+    db_password => hiera('rcdbpass', 'undef'),
+    plugins => [
+      'filesystem_attachments',
+      'zipdownload',
+    ],
+  } ->
+
   apache::vhost { 'postfixadmin':
     servername     => "pfa.${::fqdn}",
     serveraliases  => ["irc.${::fqdn}"],
@@ -75,20 +89,6 @@ class profiles::mailserverfrontend {
     error_log_file  => 'roundcube_error.log',
     access_log_file => 'access.log',
     headers         => 'always set Strict-Transport-Security "max-age=10886400; includeSubDomains; preload"',
-  }
-
-  class { 'roundcube':
-    imap_host   => 'ssl://localhost',
-    imap_port   => 993,
-    db_type     => 'mysql',
-    db_name     => hiera('rcdbname', 'undef'),
-    db_host     => hiera('rcdbhost', 'undef'),
-    db_username => hiera('rcdbuser', 'undef'),
-    db_password => hiera('rcdbpass', 'undef'),
-    plugins => [
-      'filesystem_attachments',
-      'zipdownload',
-    ],
   }
 
   roundcube::plugin { 'cor/keyboard_shortcuts':
