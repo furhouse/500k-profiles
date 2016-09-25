@@ -1,20 +1,5 @@
 class profiles::mailserverbackend {
 
-  class { ::letsencrypt:
-    email               => "admin@${::fqdn}",
-    manage_dependencies => false,
-  }
-
-  letsencrypt::certonly { 'pfa':
-    domains         => ["pfa.${::fqdn}", "mail.${::fqdn}", "irc.${::fqdn}"],
-    plugin          => 'apache',
-  }
-
-  #letsencrypt::certonly { 'testcert':
-  #  domains         => ["test.${::fqdn}"],
-  #  additional_args => ['--test-cert'],
-  #}
-
   class { '::postfix':
     master_smtp       => 'smtp inet n - n - - smtpd',
     master_submission => 'submission inet n - - - - smtpd
@@ -29,6 +14,8 @@ class profiles::mailserverbackend {
   -o smtpd_recipient_restrictions=reject_non_fqdn_recipient,reject_unknown_recipient_domain,permit_sasl_authenticated,reject',
     use_dovecot_lda   => true,
   }
+
+  $vid = hiera('virtual_uid', '5000')
 
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
@@ -48,8 +35,8 @@ class profiles::mailserverbackend {
     'smtpd_helo_restrictions':          value => 'reject_invalid_helo_hostname';
     'smtpd_data_restrictions':          value => 'reject_unauth_pipelining,reject_multi_recipient_bounce,permit';
     'smtpd_tls_protocols':              value => '!SSLv2, !SSLv3';
-    'smtpd_tls_cert_file':              value => "/etc/letsencrypt/live/mail.${::fqdn}/fullchain.pem";
-    'smtpd_tls_key_file':               value => "/etc/letsencrypt/live/mail.${::fqdn}/privkey.pem";
+    'smtpd_tls_cert_file':              value => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem";
+    'smtpd_tls_key_file':               value => "/etc/letsencrypt/live/${::fqdn}/privkey.pem";
     'smtpd_milters':                    value => 'inet:127.0.0.1:8891';
     'smtpd_sasl_type':                  value => 'dovecot';
     'smtpd_sasl_path':                  value => 'private/auth';
@@ -66,8 +53,8 @@ class profiles::mailserverbackend {
     'virtual_mailbox_maps':             value => 'mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf';
     'virtual_alias_maps':               value => 'mysql:/etc/postfix/mysql_virtual_alias_maps.cf';
     'virtual_mailbox_domains':          value => 'mysql:/etc/postfix/mysql_virtual_domains_maps.cf';
-    'virtual_uid_maps':                 value => 'static:6000';
-    'virtual_gid_maps':                 value => 'static:6000';
+    'virtual_uid_maps':                 value => "static:$vid";
+    'virtual_gid_maps':                 value => "static:$vid";
     'virtual_transport':                value => 'lmtp:unix:private/dovecot-lmtp';
   }
 
@@ -75,8 +62,8 @@ class profiles::mailserverbackend {
 
   class { dovecot::ssl:
     ssl                       => 'yes',
-    ssl_keyfile               => "/etc/letsencrypt/live/mail.${::fqdn}/privkey.pem",
-    ssl_certfile              => "/etc/letsencrypt/live/mail.${::fqdn}/fullchain.pem",
+    ssl_keyfile               => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
+    ssl_certfile              => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
     ssl_protocols             => 'TLSv1.2 TLSv1.1 !SSLv2 !SSLv3',
     ssl_cipher_list           => 'ALL:!LOW:!SSLv2:!EXP:!aNULL:!SSLv3',
     ssl_prefer_server_ciphers => 'yes',
@@ -84,12 +71,12 @@ class profiles::mailserverbackend {
   }
 
   class { dovecot::mail:
-    gid             => 6000,
-    uid             => 6000,
-    first_valid_uid => 6000,
-    first_valid_gid => 6000,
-    last_valid_uid  => 6000,
-    last_valid_gid  => 6000,
+    gid             => $vid,
+    uid             => $vid,
+    first_valid_uid => $vid,
+    first_valid_gid => $vid,
+    last_valid_uid  => $vid,
+    last_valid_gid  => $vid,
   }
 
   class { dovecot::auth:

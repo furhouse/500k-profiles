@@ -1,8 +1,38 @@
+# manage_dependencies is set to false because I've included the installation 
+# of git into common.yaml
+
 class profiles::lamp {
+
+  package { 'python':
+    ensure => installed,
+  }
+
+  class { '::letsencrypt':
+    email               => hiera('le_email', "admin@${::fqdn}"),
+    manage_dependencies => false,
+    require         => Package['python'],
+  }
+
+  $letsencrypt_staging = hiera('le_staging', false)
+
+  if $letsencrypt_staging {
+    letsencrypt::certonly { "${::fqdn}":
+      domains         => hiera_array('le_domains', []),
+      additional_args => hiera_array('le_args', []),
+      require         => Class['::letsencrypt'],
+    }
+  }
+  else {
+    letsencrypt::certonly { "${::fqdn}":
+      domains         => hiera_array('le_domains', []),
+      require         => Class['::letsencrypt'],
+    }
+  }
 
   class { '::apache':
     default_vhost => false,
     mpm_module    => 'prefork',
+    require       => Letsencrypt::Certonly["${::fqdn}"],
   }
 
   class { '::apache::mod::php': }
