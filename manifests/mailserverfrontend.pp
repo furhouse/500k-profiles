@@ -32,7 +32,6 @@ class profiles::mailserverfrontend {
 
   apache::vhost { 'postfixadmin':
     servername     => "pfa.${::fqdn}",
-    serveraliases  => ["irc.${::fqdn}"],
     manage_docroot => false,
     port           => '80',
     docroot        => '/usr/share/postfixadmin-2.93',
@@ -51,14 +50,13 @@ class profiles::mailserverfrontend {
     ip              => '*',
     port            => '443',
     docroot         => '/usr/share/postfixadmin-2.93',
-    default_vhost   => true,
     ssl             => true,
     ssl_cert        => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
     ssl_key         => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
     ssl_chain       => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
     error_log_file  => 'postfixadmin_error.log',
     access_log_file => 'access.log',
-    headers         => 'always set Strict-Transport-Security "max-age=10886400; includeSubDomains; preload"',
+    headers         => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
   }
 
   apache::vhost { 'roundcube':
@@ -88,7 +86,7 @@ class profiles::mailserverfrontend {
     ssl_chain       => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
     error_log_file  => 'roundcube_error.log',
     access_log_file => 'access.log',
-    headers         => 'always set Strict-Transport-Security "max-age=10886400; includeSubDomains; preload"',
+    headers         => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
   }
 
   roundcube::plugin { 'cor/keyboard_shortcuts':
