@@ -17,14 +17,15 @@ class profiles::mailserverfrontend {
   }
 
   class { 'roundcube':
-    imap_host   => 'ssl://localhost',
-    imap_port   => 993,
-    db_type     => 'mysql',
-    db_name     => hiera('rcdbname', 'undef'),
-    db_host     => hiera('rcdbhost', 'undef'),
-    db_username => hiera('rcdbuser', 'undef'),
-    db_password => hiera('rcdbpass', 'undef'),
-    plugins => [
+    document_root_manage => false,
+    imap_host            => 'ssl://localhost',
+    imap_port            => 993,
+    db_type              => 'mysql',
+    db_name              => hiera('rcdbname', 'undef'),
+    db_host              => hiera('rcdbhost', 'undef'),
+    db_username          => hiera('rcdbuser', 'undef'),
+    db_password          => hiera('rcdbpass', 'undef'),
+    plugins              => [
       'filesystem_attachments',
       'zipdownload',
     ],

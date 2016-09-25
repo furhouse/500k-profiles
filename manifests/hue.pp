@@ -19,9 +19,12 @@ class profiles::hue {
     require => File['01.png'],
   }
 
-  file { 'html':
-    ensure => 'absent',
-    path   => '/var/www/html',
+  file { 'original-html-dir':
+    ensure  => 'absent',
+    path    => '/var/www/html',
+    recurse => true,
+    purge   => true,
+    force   => true,
   }
 
   apache::vhost { 'hue':
