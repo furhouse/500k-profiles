@@ -46,18 +46,16 @@ class profiles::mailserverfrontend {
   }
 
   apache::vhost { 'postfixadmin-ssl':
-    servername      => "pfa.${::fqdn}",
-    manage_docroot  => false,
-    ip              => '*',
-    port            => '443',
-    docroot         => '/usr/share/postfixadmin-2.93',
-    ssl             => true,
-    ssl_cert        => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
-    ssl_key         => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
-    ssl_chain       => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
-    error_log_file  => 'postfixadmin_error.log',
-    access_log_file => 'access.log',
-    headers         => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
+    servername     => "pfa.${::fqdn}",
+    manage_docroot => false,
+    ip             => '*',
+    port           => '443',
+    docroot        => '/usr/share/postfixadmin-2.93',
+    ssl            => true,
+    ssl_cert       => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
+    ssl_key        => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
+    ssl_chain      => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
+    headers        => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
   }
 
   apache::vhost { 'roundcube':
@@ -75,19 +73,17 @@ class profiles::mailserverfrontend {
   }
 
   apache::vhost { 'roundcube-ssl':
-    servername      => "mail.${::fqdn}",
-    manage_docroot  => false,
-    ip              => '*',
-    port            => '443',
-    docroot         => '/opt/roundcubemail-1.1.5',
-    default_vhost   => false,
-    ssl             => true,
-    ssl_cert        => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
-    ssl_key         => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
-    ssl_chain       => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
-    error_log_file  => 'roundcube_error.log',
-    access_log_file => 'access.log',
-    headers         => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
+    servername     => "mail.${::fqdn}",
+    manage_docroot => false,
+    ip             => '*',
+    port           => '443',
+    docroot        => '/opt/roundcubemail-1.1.5',
+    default_vhost  => false,
+    ssl            => true,
+    ssl_cert       => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
+    ssl_key        => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
+    ssl_chain      => "/etc/letsencrypt/live/${::fqdn}/chain.pem",
+    headers        => 'always set Strict-Transport-Security "max-age=15552001; includeSubDomains; preload"',
   }
 
   roundcube::plugin { 'cor/keyboard_shortcuts':
