@@ -4,7 +4,7 @@ class profiles::hue {
     ensure => 'present',
     source => "puppet:///modules/${module_name}/01.png",
     path   => '/var/www/01.png',
-    user   => 'www-data',
+    owner  => 'www-data',
     group  => 'www-data',
     mode   => '0640',
   }
@@ -13,7 +13,7 @@ class profiles::hue {
     ensure  => 'present',
     source  => "puppet:///modules/${module_name}/index.html",
     path    => '/var/www/index.html',
-    user    => 'www-data',
+    owner   => 'www-data',
     group   => 'www-data',
     mode    => '0640',
     require => File['01.png'],
