@@ -33,6 +33,7 @@ class profiles::hue {
     manage_docroot => false,
     port           => '80',
     docroot        => '/var/www',
+    default_vhost  => true,
     rewrites       => [
       {
         comment      => 'redirect to https',

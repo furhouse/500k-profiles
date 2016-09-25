@@ -51,6 +51,12 @@ class profiles::mailserverfrontend {
     ip             => '*',
     port           => '443',
     docroot        => '/usr/share/postfixadmin-2.93',
+    rewrites       => [
+      {
+        comment      => 'redirect to users login',
+        rewrite_rule => ['"^/$" "/users/" [R]'],
+      },
+    ],
     ssl            => true,
     ssl_cert       => "/etc/letsencrypt/live/${::fqdn}/fullchain.pem",
     ssl_key        => "/etc/letsencrypt/live/${::fqdn}/privkey.pem",
