@@ -24,7 +24,7 @@ class profiles::hue {
     path   => '/var/www/html',
   }
 
-  apache::vhost { 'default':
+  apache::vhost { 'hue':
     servername     => "${::fqdn}",
     serveraliases  => ["irc.${::fqdn}"],
     manage_docroot => false,
@@ -39,7 +39,7 @@ class profiles::hue {
     ],
   }
 
-  apache::vhost { 'default-ssl':
+  apache::vhost { 'hue-ssl':
     servername     => "${::fqdn}",
     manage_docroot => false,
     ip             => '*',
