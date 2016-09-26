@@ -5,8 +5,9 @@ class profiles::satellitemail {
   if $satellite {
 
     class { '::postfix':
-      master_smtp => 'smtp inet n - n - - smtpd',
-      myorigin    => hiera('satellite_origin', undef),
+      master_smtp         => 'smtp inet n - n - - smtpd',
+      myorigin            => hiera('satellite_origin', undef),
+      root_mail_recipient => hiera('satellite_root_rcpt', undef),
     }
 
     postfix::config {
