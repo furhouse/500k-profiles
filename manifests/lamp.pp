@@ -10,7 +10,7 @@ class profiles::lamp {
   class { '::letsencrypt':
     email               => hiera('le_email', "admin@${::fqdn}"),
     manage_dependencies => false,
-    require         => Package['python'],
+    require             => Package['python'],
   }
 
   $letsencrypt_staging = hiera('le_staging', false)
@@ -24,8 +24,8 @@ class profiles::lamp {
   }
   else {
     letsencrypt::certonly { "${::fqdn}":
-      domains         => hiera_array('le_domains', []),
-      require         => Class['::letsencrypt'],
+      domains => hiera_array('le_domains', []),
+      require => Class['::letsencrypt'],
     }
   }
 
@@ -57,5 +57,9 @@ class profiles::lamp {
   create_resources('mysql_database', $sqldatabases)
   create_resources('mysql_user', $sqlusers)
   create_resources('mysql_grant', $sqlgrants)
+
+  $vhosts = hiera_hash('lamp_vhosts', {})
+
+  create_resources('apache::vhost', $vhosts)
 
 }
