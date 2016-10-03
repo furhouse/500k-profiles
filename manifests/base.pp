@@ -1,6 +1,6 @@
 class profiles::base {
 
-  $packages = hiera('profiles::base::packages')
+  $packages = hiera_array('profiles::base::packages')
 
   Package { ensure  => latest, }
 
