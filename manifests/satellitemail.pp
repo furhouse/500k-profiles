@@ -24,8 +24,8 @@ class profiles::satellitemail {
     }
 
   }
-  else {
-    notify { 'Please set the hiera key satellite_mail to true to enable the postfix satellite config.': }
-  }
+  # else {
+  #   notify { 'Please set the hiera key satellite_mail to true to enable the postfix satellite config.': }
+  # }
 
 }
