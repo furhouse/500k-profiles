@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#USER=""
+#PASSWORD=""
+OUTPUT="/var/backups/mysql"
+
+find $OUTPUT -type f -mtime +7 -delete
+
+databases=$(mysql -e "SHOW DATABASES;" | tr -d "| " | grep -v Database)
+
+for db in $databases; do
+    if [[ "$db" != "information_schema" ]] && [[ "$db" != "performance_schema" ]] && [[ "$db" != "mysql" ]] && [[ "$db" != _* ]] ; then
+        echo "Dumping database: $db"
+        mysqldump --databases $db > $OUTPUT/$(date "+%Y-%m-%d").$db.sql
+        gzip $OUTPUT/$(date "+%Y-%m-%d").$db.sql
+    fi
+done
+
+# dump grants
+echo "Dumping grants"
+mysql --skip-column-names -A -e "SELECT CONCAT('SHOW GRANTS FOR ''',user,'''@''',host,''';') FROM mysql.user WHERE user<>''" | \
+        mysql --skip-column-names -A | \
+        sed 's/$/;/g' > $OUTPUT/$(date "+%Y-%m-%d").grants.sql
+gzip $OUTPUT/$(date "+%Y-%m-%d").grants.sql
