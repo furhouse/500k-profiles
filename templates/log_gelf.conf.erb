@@ -1,0 +1,19 @@
+GelfEnabled On
+<% if ! @gelf_url.nil? %>
+GelfUrl "<%= @gelf_url -%>"
+<% end %>
+<% if ! @gelf_source.nil? %>
+GelfSource "<%= @gelf_source -%>"
+<% end %>
+<% if ! @gelf_facility.nil? %>
+GelfFacility "<%= @gelf_facility -%>"
+<% end %>
+<% if ! @gelf_tag.nil? %>
+GelfTag "<%= @gelf_tag -%>"
+<% end %>
+<% if ! @gelf_cookie.nil? %>
+GelfCookie "<%= gelf_cookie -%>"
+<% end %>
+<% if ! @gelf_fields.nil? %>
+GelfFields "<%= @gelf_fields -%>"
+<% end %>

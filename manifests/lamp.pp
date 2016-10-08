@@ -39,6 +39,59 @@ class profiles::lamp {
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
 
+  apache::mod { 'log_gelf':
+    package => 'libapache2-mod-gelf',
+    require => Package['libapache2-mod-gelf'],
+  }
+
+  define modgelf_conf (
+    $gelf_url      = hiera('gelf_url', undef),
+    $gelf_source   = hiera('gelf_source', undef),
+    $gelf_facility = hiera('gelf_facility', undef),
+    $gelf_tag      = hiera('gelf_tag', undef),
+    $gelf_cookie   = hiera('gelf_cookie', undef),
+    $gelf_fields   = hiera('gelf_fields', undef),
+  ) {
+    file { 'log_gelf.conf':
+      ensure  => file,
+      path    => "${::apache::mod_dir}/log_gelf.conf",
+      mode    => $::apache::file_mode,
+      content => template('profiles/log_gelf.conf.erb'),
+      require => Exec["mkdir ${::apache::mod_dir}"],
+      before  => File[$::apache::mod_dir],
+      notify  => Class['apache::service'],
+    }
+
+    file{ 'log_gelf.conf symlink':
+        ensure  => link,
+        path    => "${::apache::mod_enable_dir}/log_gelf.conf",
+        target  => "${::apache::mod_dir}/log_gelf.conf",
+        owner   => 'root',
+        group   => $::apache::params::root_group,
+        mode    => $::apache::file_mode,
+        require => [
+          File['log_gelf.conf'],
+          Exec["mkdir ${::apache::mod_enable_dir}"],
+        ],
+        before  => File["${::apache::mod_enable_dir}"],
+        notify  => Class['apache::service'],
+      }
+  }
+
+  modgelf_conf { 'log_gelf': }
+
+  file { 'libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb':
+    path   => '/var/cache/apt/archives/libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb',
+    source => "puppet:///modules/${module_name}/libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb",
+  }
+
+  package { 'libapache2-mod-gelf':
+    provider => dpkg,
+    ensure   => latest,
+    source   => '/var/cache/apt/archives/libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb',
+    require  => File['libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb'],
+  }
+
   class { '::mysql::server':
     root_password           => hiera('sqlrootpass', 'undef'),
     remove_default_accounts => true,
