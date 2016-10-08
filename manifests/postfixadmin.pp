@@ -11,16 +11,16 @@ class profiles::postfixadmin {
 
   define postfixadmin::config (
     $configured     = true,
-    $setup_password = hiera('postfixadmin::pfasetup_pass', 'undef'),
+    $setup_password = hiera('postfixadmin::pfasetup_pass', undef),
     $pfadb_type     = 'mysqli',
-    $pfadb_host     = hiera('postfixadmin::pfadb_host', 'undef'),
-    $pfadb_user     = hiera('postfixadmin::pfadb_user', 'undef'),
-    $pfadb_passwd   = hiera('postfixadmin::pfadb_passwd', 'undef'),
-    $pfadb_name     = hiera('postfixadmin::pfadb_name', 'undef'),
-    $db_host        = hiera('postfix::db_host', 'undef'),
-    $db_user        = hiera('postfix::db_user', 'undef'),
-    $db_passwd      = hiera('postfix::db_passwd', 'undef'),
-    $db_name        = hiera('postfix::db_name', 'undef'),
+    $pfadb_host     = hiera('postfixadmin::pfadb_host', undef),
+    $pfadb_user     = hiera('postfixadmin::pfadb_user', undef),
+    $pfadb_passwd   = hiera('postfixadmin::pfadb_passwd', undef),
+    $pfadb_name     = hiera('postfixadmin::pfadb_name', undef),
+    $db_host        = hiera('postfix::db_host', undef),
+    $db_user        = hiera('postfix::db_user', undef),
+    $db_passwd      = hiera('postfix::db_passwd', undef),
+    $db_name        = hiera('postfix::db_name', undef),
   ) {
     file { 'postfixadmin-config' :
       ensure  => file,
