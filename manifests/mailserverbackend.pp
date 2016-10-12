@@ -57,6 +57,7 @@ class profiles::mailserverbackend {
     'virtual_uid_maps':                 value => "static:$vid";
     'virtual_gid_maps':                 value => "static:$vid";
     'virtual_transport':                value => 'lmtp:unix:private/dovecot-lmtp';
+    'content_filter':                   value => 'amavis:[127.0.0.1]:10024';
   }
 
   include amavis
