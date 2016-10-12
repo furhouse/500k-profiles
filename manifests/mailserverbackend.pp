@@ -13,6 +13,7 @@ class profiles::mailserverbackend {
   -o smtpd_sender_restrictions=reject_sender_login_mismatch
   -o smtpd_recipient_restrictions=reject_non_fqdn_recipient,reject_unknown_recipient_domain,permit_sasl_authenticated,reject',
     use_dovecot_lda   => true,
+    use_amavisd       => true,
   }
 
   $vid = hiera('virtual_uid', '5000')
@@ -56,6 +57,20 @@ class profiles::mailserverbackend {
     'virtual_uid_maps':                 value => "static:$vid";
     'virtual_gid_maps':                 value => "static:$vid";
     'virtual_transport':                value => 'lmtp:unix:private/dovecot-lmtp';
+  }
+
+  include amavis
+
+  class { '::amavis::config':
+    bypass_spam_checks_maps  => '( \%bypass_spam_checks, \@bypass_spam_checks_acl, \$bypass_spam_checks_re);',
+    #final_virus_destiny      => 'D_REJECT; # (defaults to D_BOUNCE)',
+  }
+
+  class { '::clamav':
+    manage_clamd             => true,
+    manage_freshclam         => true,
+    clamd_service_ensure     => 'stopped',
+    freshclam_service_ensure => 'stopped',
   }
 
   include dovecot

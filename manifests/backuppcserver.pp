@@ -87,6 +87,7 @@ class profiles::backuppcserver inherits ::backuppc::params {
   class { '::backuppc::server':
     backuppc_password    => $serverpass,
     apache_configuration => false,
+    ping_max_msec        => 30,
   } ->
 
   exec { 'remove-localhost-hosts':
