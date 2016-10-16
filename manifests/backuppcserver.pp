@@ -1,6 +1,6 @@
 class profiles::backuppcserver inherits ::backuppc::params {
 
-  $serverpass = hiera('profiles::backuppcserver::serverpass', '')
+  $adminpass = hiera('bpc_adminpass', undef)
 
   class { '::apache': default_vhost => false }
 
@@ -33,8 +33,6 @@ class profiles::backuppcserver inherits ::backuppc::params {
     ssl_cert        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
     ssl_key         => '/etc/ssl/private/ssl-cert-snakeoil.key',
     ssl_chain       => undef,
-    error_log_file  => 'backuppc_error.log',
-    access_log_file => 'access.log',
     docroot_owner   => 'www-data',
     docroot_group   => 'www-data',
     directories     => [
@@ -70,34 +68,28 @@ class profiles::backuppcserver inherits ::backuppc::params {
     ensure  => present,
   }
 
-  # class { '::backuppc::client':
-    # backuppc_hostname => $::fqdn,
-    # xfer_method       => 'tar',
-    # tar_share_name    => ['/home', '/etc', '/var/log'],
-    # tar_client_cmd    => '/usr/bin/sudo $tarPath -c -v -f - -C $shareName --totals',
-    # tar_full_args     => '$fileList',
-    # tar_incr_args     => '--newer=$incrDate $fileList',
-  # }
-
   backuppc::server::user { 'backuppc':
-    password => $serverpass,
+    password => $adminpass,
     require  => Package['apache2-utils'],
   }
 
   class { '::backuppc::server':
-    backuppc_password    => $serverpass,
-    apache_configuration => false,
-    ping_max_msec        => 30,
-  } ->
+    backuppc_password     => $adminpass,
+    apache_configuration  => false,
+    ping_max_msec         => 30,
+    email_admin_user_name => hiera('bpc_mailto', undef)
+  }
 
   exec { 'remove-localhost-hosts':
     command => "/bin/sed -i '/localhost/ d' ${::backuppc::params::hosts}",
     onlyif  => "/bin/grep localhost ${::backuppc::params::hosts}",
+    require => Class['::backuppc::server'],
   }
 
   file { 'remove-localhost-config':
-    ensure => absent,
-    path   => "${::backuppc::params::config_directory}/localhost.pl",
+    ensure  => absent,
+    path    => "${::backuppc::params::config_directory}/localhost.pl",
+    require => Class['::backuppc::server'],
   }
 
   file { '/etc/sudoers.d/backuppc_localhost':
