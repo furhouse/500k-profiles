@@ -4,7 +4,9 @@ class profiles::printserver {
     default_queue => hiera('cups_default_queue', undef),
   }
 
-  class { '::cups::server': }
+  class { '::cups::server':
+    port =>  631,
+  }
 
   $printers = hiera_hash('printers', {})
   create_resources('cups_queue', $printers)

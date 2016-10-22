@@ -24,8 +24,9 @@ class profiles::lamp {
   }
   else {
     letsencrypt::certonly { "${::fqdn}":
-      domains => hiera_array('le_domains', []),
-      require => Class['::letsencrypt'],
+      domains              => hiera_array('le_domains', []),
+      require              => Class['::letsencrypt'],
+      cron_success_command => 'service apache2 reload',
     }
   }
 
