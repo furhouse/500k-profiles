@@ -3,31 +3,36 @@
 
 class profiles::lamp {
 
-  package { 'python':
-    ensure => installed,
-  }
-
-  class { '::letsencrypt':
-    email               => hiera('le_email', "admin@${::fqdn}"),
-    manage_dependencies => false,
-    require             => Package['python'],
-  }
-
+  $enable_letsencrypt = hiera('enable_letsencrypt', true)
   $letsencrypt_staging = hiera('le_staging', false)
 
-  if $letsencrypt_staging {
-    letsencrypt::certonly { "${::fqdn}":
-      domains         => hiera_array('le_domains', []),
-      additional_args => hiera_array('le_args', []),
-      require         => Class['::letsencrypt'],
+  if $enable_letsencrypt {
+
+    package { 'python':
+      ensure => installed,
     }
-  }
-  else {
-    letsencrypt::certonly { "${::fqdn}":
-      domains              => hiera_array('le_domains', []),
-      require              => Class['::letsencrypt'],
-      cron_success_command => 'service apache2 reload',
+
+    class { '::letsencrypt':
+      email               => hiera('le_email', "admin@${::fqdn}"),
+      manage_dependencies => false,
+      require             => Package['python'],
     }
+
+    if $letsencrypt_staging {
+      letsencrypt::certonly { "${::fqdn}":
+        domains         => hiera_array('le_domains', []),
+        additional_args => hiera_array('le_args', []),
+        require         => Class['::letsencrypt'],
+      }
+    }
+    else {
+      letsencrypt::certonly { "${::fqdn}":
+        domains              => hiera_array('le_domains', []),
+        require              => Class['::letsencrypt'],
+        cron_success_command => 'service apache2 reload',
+      }
+    }
+
   }
 
   class { '::apache':

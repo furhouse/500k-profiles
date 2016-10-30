@@ -23,19 +23,19 @@ class profiles::backuppcserver inherits ::backuppc::params {
   }
 
   apache::vhost{'backuppc-ssl':
-    servername      => $::fqdn,
-    manage_docroot  => false,
-    ip              => '*',
-    port            => '443',
-    docroot         => $::backuppc::params::cgi_directory,
-    default_vhost   => true,
-    ssl             => true,
-    ssl_cert        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
-    ssl_key         => '/etc/ssl/private/ssl-cert-snakeoil.key',
-    ssl_chain       => undef,
-    docroot_owner   => 'www-data',
-    docroot_group   => 'www-data',
-    directories     => [
+    servername     => $::fqdn,
+    manage_docroot => false,
+    ip             => '*',
+    port           => '443',
+    docroot        => $::backuppc::params::cgi_directory,
+    default_vhost  => true,
+    ssl            => true,
+    ssl_cert       => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
+    ssl_key        => '/etc/ssl/private/ssl-cert-snakeoil.key',
+    ssl_chain      => undef,
+    docroot_owner  => 'www-data',
+    docroot_group  => 'www-data',
+    directories    => [
       {
         path           => $::backuppc::params::cgi_directory,
         allow_override => ['None'],
@@ -52,7 +52,7 @@ class profiles::backuppcserver inherits ::backuppc::params {
         auth_require   => 'valid-user',
       },
     ],
-    aliases         => [
+    aliases        => [
       {
         alias => '/backuppc',
         path  => $::backuppc::params::cgi_directory
