@@ -6,10 +6,6 @@ class profiles::librenms {
   # install librenms, config data is taken from hiera
   include ::librenms
 
-  class { '::librenms:mysql':
-    mysql_pass     => hiera('librenms_mysql_pass', undef),
-  }
-
   apache::vhost { 'librenms':
     servername     => "nms.${::fqdn}",
     manage_docroot => '/opt/librenms/html',

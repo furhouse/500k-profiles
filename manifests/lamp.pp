@@ -33,12 +33,18 @@ class profiles::lamp {
       }
     }
 
+    class { '::apache':
+      default_vhost => false,
+      mpm_module    => 'prefork',
+      require       => Letsencrypt::Certonly["${::fqdn}"],
+    }
   }
+  else {
 
-  class { '::apache':
-    default_vhost => false,
-    mpm_module    => 'prefork',
-    require       => Letsencrypt::Certonly["${::fqdn}"],
+    class { '::apache':
+      default_vhost => false,
+      mpm_module    => 'prefork',
+    }
   }
 
   class { '::apache::mod::php': }
@@ -101,7 +107,7 @@ class profiles::lamp {
   class { '::mysql::server':
     root_password           => hiera('sqlrootpass', 'undef'),
     remove_default_accounts => true,
-    package_name            => 'mysql-server-5.6',
+    package_name            => hiera('mysql_version', 'mysql-server-5.6'),
     override_options        => {
       'mysqld' => {
         'table_definition_cache' => '50',
