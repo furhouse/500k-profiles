@@ -4,7 +4,10 @@ class profiles::librenms {
   ensure_packages(['php5-mysql', 'php5-mcrypt', 'php5-gd', 'php5-snmp', 'php-pear', 'python-mysqldb', 'php-net-ipv4', 'php-net-ipv6', 'rrdtool'])
 
   # install librenms, config data is taken from hiera
-  include ::librenms
+  class { '::librenms':
+    manage_git => false,
+    mysql_pass => hiera('librenms_mysql_pass', undef)
+  }
 
   apache::vhost { 'librenms':
     servername     => "nms.${::fqdn}",
