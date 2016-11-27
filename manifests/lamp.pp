@@ -37,6 +37,9 @@ class profiles::lamp {
       default_vhost => false,
       mpm_module    => 'prefork',
       require       => Letsencrypt::Certonly["${::fqdn}"],
+      log_formats => {
+        combined => '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %D',
+      },
     }
   }
   else {
@@ -44,6 +47,9 @@ class profiles::lamp {
     class { '::apache':
       default_vhost => false,
       mpm_module    => 'prefork',
+      log_formats => {
+        combined => '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %D',
+      },
     }
   }
 

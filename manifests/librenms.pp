@@ -28,6 +28,7 @@ class profiles::librenms {
     docroot        => '/opt/librenms/html',
     default_vhost  => false,
     ssl            => true,
+    override       => ['All'],
   }
 
 }
