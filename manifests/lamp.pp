@@ -29,15 +29,18 @@ class profiles::lamp {
       letsencrypt::certonly { "${::fqdn}":
         domains              => hiera_array('le_domains', []),
         require              => Class['::letsencrypt'],
+        manage_cron          => true,
         cron_success_command => 'service apache2 reload',
       }
     }
 
     class { '::apache':
-      default_vhost => false,
-      mpm_module    => 'prefork',
-      require       => Letsencrypt::Certonly["${::fqdn}"],
-      log_formats => {
+      default_vhost    => false,
+      mpm_module       => 'prefork',
+      server_tokens    => 'Prod',
+      server_signature => 'Off',
+      require          => Letsencrypt::Certonly["${::fqdn}"],
+      log_formats      => {
         combined => '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %D',
       },
     }
@@ -45,10 +48,12 @@ class profiles::lamp {
   else {
 
     class { '::apache':
-      default_vhost => false,
-      mpm_module    => 'prefork',
-      log_formats => {
-        combined => '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %D',
+      default_vhost    => false,
+      mpm_module       => 'prefork',
+      server_tokens    => 'Prod',
+      server_signature => 'Off',
+      log_formats      => {
+        combined       => '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %D',
       },
     }
   }
