@@ -30,6 +30,7 @@ class profiles::lamp {
         domains              => hiera_array('le_domains', []),
         require              => Class['::letsencrypt'],
         manage_cron          => true,
+        cron_before_command  => 'service apache2 stop',
         cron_success_command => 'service apache2 reload',
       }
     }

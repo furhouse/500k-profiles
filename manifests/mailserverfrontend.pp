@@ -40,7 +40,7 @@ class profiles::mailserverfrontend {
       {
         comment      => 'redirect to https',
         rewrite_cond => ['%{HTTPS} off'],
-        rewrite_rule => ['(.*) https://%{HTTP_HOST}:443%{REQUEST_URI}'],
+        rewrite_rule => ['(.*) https://%{HTTP_HOST}%{REQUEST_URI}'],
       },
     ],
   }
@@ -73,7 +73,7 @@ class profiles::mailserverfrontend {
       {
         comment      => 'redirect to https',
         rewrite_cond => ['%{HTTPS} off'],
-        rewrite_rule => ['(.*) https://%{HTTP_HOST}:443%{REQUEST_URI}'],
+        rewrite_rule => ['(.*) https://%{HTTP_HOST}%{REQUEST_URI}'],
       },
     ],
   }
