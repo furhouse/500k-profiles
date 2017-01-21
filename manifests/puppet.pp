@@ -14,9 +14,9 @@ class profiles::puppet {
   else {
 
     class { '::hiera':
-      datadir        => '/etc/puppet/hieradata/%{environment}/hieradata',
+      datadir        => '/etc/puppetlabs/code/hieradata/%{::environment}/hieradata',
       merge_behavior => 'deeper',
-      hierarchy => [
+      hierarchy      => [
         'nodes/%{::fqdn}',
         'common',
       ],
