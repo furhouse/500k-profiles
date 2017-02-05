@@ -12,7 +12,7 @@ GelfFacility "<%= @gelf_facility -%>"
 GelfTag "<%= @gelf_tag -%>"
 <% end %>
 <% unless @gelf_cookie.nil? %>
-GelfCookie "<%= gelf_cookie -%>"
+GelfCookie "<%= @gelf_cookie -%>"
 <% end %>
 <% unless @gelf_fields.nil? %>
 GelfFields "<%= @gelf_fields -%>"

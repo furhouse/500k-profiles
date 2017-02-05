@@ -19,20 +19,6 @@ define profiles::mod_gelf (
       notify  => Class['apache::service'],
     }
 
-    file{ 'log_gelf.conf symlink':
-        ensure  => link,
-        path    => "${::apache::mod_enable_dir}/log_gelf.conf",
-        target  => "${::apache::mod_dir}/log_gelf.conf",
-        owner   => 'root',
-        group   => $::apache::params::root_group,
-        mode    => $::apache::file_mode,
-        require => [
-          File['log_gelf.conf'],
-          Exec["mkdir ${::apache::mod_enable_dir}"],
-        ],
-        before  => File["${::apache::mod_enable_dir}"],
-        notify  => Class['apache::service'],
-      }
   }
 
 file { 'libapache2-mod-gelf_0.2.0-1_amd64.ubuntu.deb':
