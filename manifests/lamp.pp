@@ -67,7 +67,6 @@ class profiles::lamp {
 
   apache::mod { 'log_gelf':
     package => 'libapache2-mod-gelf',
-    require => Profiles::Mod_gelf['default'],
   }
 
   class { '::mysql::server':
