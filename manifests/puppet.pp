@@ -28,12 +28,12 @@ class profiles::puppet {
       sources           => {
         'hiera4' => {
           'remote'  => hiera('modules_remote', undef),
-          'basedir' => "${::settings::confdir}/environments",
+          'basedir' => "${::settings::codedir}/environments",
           'prefix'  => false,
         },
         'hiera3'  => {
           'remote'  => hiera('hiera_remote', undef),
-          'basedir' => "${::settings::confdir}/hieradata",
+          'basedir' => "${::settings::codedir}/hieradata",
           'prefix'  => false,
         }
       },
