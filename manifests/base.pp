@@ -16,15 +16,18 @@ class profiles::base {
 
   if !$bpc_server {
 
+    notify { "Configuring backuppc client.":}
+
     class { '::backuppc::client':
       backuppc_hostname    => hiera('bpc_host', undef),
       rsync_share_name     => hiera_array('bpc_rsync_shares', []),
-      backup_files_exclude => hiera_hash('bpc_excludes', {}),
+      backup_files_exclude => lookup('bpc_excludes', {}),
     }
   }
 
   else {
 
+    notify { "Configuring backuppc client, for the backuppc server.":}
     class { '::backuppc::client':
       backuppc_hostname => "${::fqdn}",
       xfer_method       => 'tar',
