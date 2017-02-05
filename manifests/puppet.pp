@@ -14,7 +14,7 @@ class profiles::puppet {
   else {
 
     class { '::hiera':
-      datadir        => '/etc/puppetlabs/code/hieradata/%{::environment}/hieradata',
+      datadir        => '/etc/puppetlabs/code/hieradata/%{::environment}',
       merge_behavior => 'deeper',
       hierarchy      => [
         'nodes/%{::fqdn}',
@@ -26,12 +26,12 @@ class profiles::puppet {
       version           => '1.5.1',
       manage_modulepath => false,
       sources           => {
-        'puppet' => {
+        'hiera4' => {
           'remote'  => hiera('modules_remote', undef),
           'basedir' => "${::settings::confdir}/environments",
           'prefix'  => false,
         },
-        'hiera'  => {
+        'hiera3'  => {
           'remote'  => hiera('hiera_remote', undef),
           'basedir' => "${::settings::confdir}/hieradata",
           'prefix'  => false,
