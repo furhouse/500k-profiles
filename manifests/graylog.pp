@@ -48,7 +48,7 @@ class profiles::graylog {
   }
 
   class { '::graylog::server':
-    package_version => '2.1.2-1',
+    package_version => '2.1.3-1',
     config          => {
       'password_secret'          => hiera('graylog::pass', undef),
       'root_password_sha2'       => hiera('graylog::sha2', undef),
