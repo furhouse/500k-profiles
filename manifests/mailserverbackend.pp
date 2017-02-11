@@ -17,6 +17,7 @@ class profiles::mailserverbackend {
   }
 
   $vid = hiera('virtual_uid', '5000')
+  $pub_ipv4 = $ec2_metadata['public-ipv4'] 
 
   postfix::config {
     'smtp_tls_mandatory_ciphers':       value => 'high';
@@ -48,7 +49,7 @@ class profiles::mailserverbackend {
     'inet_protocols':                   value => 'ipv4';
     'relay_domains':                    value => '*';
     'mydestination':                    value => 'localhost';
-    'mynetworks':                       value => "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${::ec2_public_ipv4}/32";
+    'mynetworks':                       value => "127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 $pub_ipv4/32";
     'non_smtpd_milters':                value => 'inet:127.0.0.1:8891';
     'virtual_mailbox_base':             value => '/srv/vmail';
     'virtual_mailbox_maps':             value => 'mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf';
