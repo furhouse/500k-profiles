@@ -16,6 +16,8 @@ class profiles::zabbixsrv {
     database_type    => 'mysql',
     default_vhost    => true,
     apache_use_ssl   => true,
+    apache_ssl_cert  => "${::settings::ssldir}/certs/${::clientcert}.pem",
+    apache_ssl_key   => "${::settings::ssldir}/private_keys/${::clientcert}.pem",
     startdiscoverers => '10',
   }
 

@@ -31,6 +31,8 @@ class profiles::librenms {
     docroot        => '/opt/librenms/html',
     default_vhost  => false,
     ssl            => true,
+    ssl_cert       => "${::settings::ssldir}/certs/${::clientcert}.pem",
+    ssl_key        => "${::settings::ssldir}/private_keys/${::clientcert}.pem",
     override       => ['All'],
   }
 
