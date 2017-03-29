@@ -11,7 +11,6 @@ class profiles::rack {
     changes => [
       'set ENABLED true',
     ],
-    notify  => Service['ipmievd'],
     require => Class['::ipmi'],
   }
 
