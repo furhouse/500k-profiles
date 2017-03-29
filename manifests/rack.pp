@@ -9,7 +9,7 @@ class profiles::rack {
   augeas { 'ipmievd':
     context => '/files/etc/default/ipmievd',
     changes => [
-      'set ENABLE true',
+      'set ENABLED true',
     ],
     require => Class['::ipmi'],
   }
