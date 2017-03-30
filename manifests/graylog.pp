@@ -19,6 +19,7 @@ class profiles::graylog {
 
   class { '::mongodb::server':
     bind_ip     => ['127.0.0.1'],
+    dbpath_fix  => false,
     pidfilepath => '/var/lib/mongodb/mongod.pid',
     require     => Class['::mongodb::globals']
   }
