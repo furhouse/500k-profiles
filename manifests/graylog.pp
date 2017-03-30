@@ -51,8 +51,8 @@ class profiles::graylog {
   class { '::graylog::server':
     package_version => '2.1.3-1',
     config          => {
-      'password_secret'          => hiera('graylog::pass', undef),
-      'root_password_sha2'       => hiera('graylog::sha2', undef),
+      'password_secret'          => hiera('profiles::graylog::pass', undef),
+      'root_password_sha2'       => hiera('profiles::graylog::sha2', undef),
       'root_timezone'            => 'Europe/Amsterdam',
       'versionchecks'            => false,
       'usage_statistics_enabled' => false,
@@ -61,4 +61,11 @@ class profiles::graylog {
     },
     require         => Class['::graylog::repository']
   }
+
+  class { '::nginx':
+    nginx_locations => hiera('profiles::n_locations'),
+    nginx_servers   => hiera('profiles::n_servers'),
+    nginx_upstreams => hiera('profiles::n_upstreams'),
+  }
+
 }
