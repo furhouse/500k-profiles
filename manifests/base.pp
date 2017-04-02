@@ -12,6 +12,13 @@ class profiles::base {
     require => Class['::sudo'],
   }
 
+  class { '::gcs':
+    server_url      => hiera('profiles::base::gcs_url', undef),
+    update_interval => hiera('profiles::base::gcs_interval', 30),
+    tls_skip_verify => hiera('profiles::base::gcs_tls_skip_verify', true),
+    tags            => hiera_array('profiles::base::gcs_tags', []),
+  }
+
   $bpc_server = hiera('bpc_server', false)
 
   if !$bpc_server {
@@ -26,7 +33,7 @@ class profiles::base {
   else {
 
     class { '::backuppc::client':
-      backuppc_hostname => "${::fqdn}",
+      backuppc_hostname => $::fqdn,
       xfer_method       => 'tar',
       tar_share_name    => [ '/home', '/etc', '/var/log'],
       tar_client_cmd    => '/usr/bin/sudo $tarPath -c -v -f - -C $shareName --totals',
