@@ -20,7 +20,7 @@ class profiles::mopidy {
     require  => [ ::Apt::Ppa['ppa:chris-lea/python-tornado'], ::Apt::Ppa['ppa:chris-lea/python-pycares'] ],
   }
 
-  $packages = [ 'mpc', 'ncmpcpp', 'mopidy', 'mopidy-spotify', 'mopidy-spotify-tunigo', 'mopidy-scrobbler' ]
+  $packages = [ 'mpc', 'ncmpcpp', 'mopidy', 'mopidy-spotify', 'mopidy-scrobbler' ]
 
   package { $packages:
     ensure  => installed,
