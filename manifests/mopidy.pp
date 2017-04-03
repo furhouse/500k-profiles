@@ -44,6 +44,12 @@ class profiles::mopidy {
     require  => [ Class['::python'], Package[$packages] ],
   }
 
+  package { 'Mopidy-Iris':
+    ensure   => present,
+    provider => 'pip',
+    require  => [ Class['::python'], Package[$packages] ],
+  }
+
   exec { 'start_mopidy_boot':
     path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'  ],
     command => 'echo "mopidy mopidy/daemon boolean true" | debconf-set-selections',
