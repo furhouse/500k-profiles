@@ -1,8 +1,5 @@
-# puppet module install --moduelpath . puppetlabs-apt
-# puppet module install --moduelpath . stankevich-python
-# puppet apply --modulepath . mopidy.pp --noop
+# mopidy.conf is NOT being managed ... yet
 class profiles::mopidy {
-  # include ::apt
 
   ::apt::ppa { 'ppa:chris-lea/python-tornado':
     package_manage => true,
@@ -45,6 +42,12 @@ class profiles::mopidy {
   }
 
   package { 'Mopidy-Iris':
+    ensure   => present,
+    provider => 'pip',
+    require  => [ Class['::python'], Package[$packages] ],
+  }
+
+  package { 'Mopidy-Local-SQLite':
     ensure   => present,
     provider => 'pip',
     require  => [ Class['::python'], Package[$packages] ],
