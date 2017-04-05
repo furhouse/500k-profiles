@@ -1,6 +1,7 @@
 class profiles::grafana {
 
   class { '::grafana':
+    version  => '4.2.0',
     cfg      => {
       app_mode    => 'production',
       server      => {
