@@ -61,4 +61,12 @@ class profiles::grafana {
     }
   }
 
+  exec { 'install_zabbix_plugin':
+    path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'  ],
+    command => 'grafana-cli plugins install vonage-status-panel',
+    unless  => 'grafana-cli plugins ls | grep vonage-status-panel',
+    notify  => Class['::grafana::service'],
+    require => Class['::grafana::install'],
+  }
+
 }

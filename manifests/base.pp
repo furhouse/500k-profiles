@@ -1,5 +1,24 @@
 class profiles::base {
 
+  $imageuser = hiera('profiles::base::imageuser', undef)
+
+  class { '::users': }
+
+  group { $imageuser:
+    ensure => absent,
+  }
+
+  user { $imageuser:
+    ensure => absent,
+  }
+
+  # Not absent yet to be able to check bootstrap logs
+  file { "/home/${imageuser}":
+    ensure  => present,
+  }
+
+  User[$imageuser] -> Group[$imageuser] -> File["/home/${imageuser}"] -> Class['::users']
+
   $packages = hiera_array('profiles::base::packages')
 
   package { $packages:
@@ -35,7 +54,6 @@ class profiles::base {
     }
   }
 
-  class { '::users': }
   class { '::vim': }
   class { '::git': }
 
