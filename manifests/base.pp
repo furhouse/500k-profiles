@@ -31,8 +31,11 @@ class profiles::base {
     require => Class['::sudo'],
   }
 
-  class { '::sssd':
-    config => hiera_hash('profiles::base::sssd_cfg', {})
+  $configure_sssd = hiera('profiles::base::configure_sssd', true)
+  if $configure_sssd {
+    class { '::sssd':
+      config => hiera_hash('profiles::base::sssd_cfg', {})
+    }
   }
 
   class { '::ca_cert':
