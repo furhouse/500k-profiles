@@ -35,6 +35,7 @@ class profiles::base {
     config => hiera_hash('profiles::base::sssd_cfg', {})
   }
 
+  include '::ca_cert'
   ca_cert::ca { '500k':
     ensure => 'trusted',
     source => hiera('profiles::base::500k_ca_url', undef),
