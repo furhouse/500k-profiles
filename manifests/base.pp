@@ -31,6 +31,10 @@ class profiles::base {
     require => Class['::sudo'],
   }
 
+  class { '::sssd':
+    config => hiera_hash('profiles::base::sssd_cfg', {})
+  }
+
   $satellite = hiera('profiles::base::satellite_mail', true)
   if $satellite {
 
