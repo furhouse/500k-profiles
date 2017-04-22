@@ -94,7 +94,7 @@ class profiles::base {
   class { '::zabbix::agent':
     server       => hiera('profiles::base::zbx_agent_server', undef),
     serveractive => hiera('profiles::base::zbx_agent_serveractive', undef),
-    hostnameitem => hiera('profiles::base::zbx_agent_hostnameitem', undef),
+    hostname => hiera('profiles::base::zbx_agent_hostname', undef),
   }
 
   class { '::gcs':

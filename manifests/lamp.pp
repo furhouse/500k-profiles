@@ -63,6 +63,10 @@ class profiles::lamp {
   class { '::apache::mod::rewrite': }
   class { '::apache::mod::ssl': }
 
+  class { '::apache::mod::status':
+    allow_from => hiera_array('apachestatus::from', []),
+  }
+
   profiles::mod_gelf { 'default': }
 
   apache::mod { 'log_gelf':
