@@ -1,0 +1,41 @@
+class profiles::smartproxy {
+
+  #Defaults:foreman-proxy !requiretty
+  class { '::foreman_proxy':
+    foreman_base_url      => hiera('profiles::smartproxy::foreman_base_url', undef),
+    oauth_consumer_key    => hiera('profiles::smartproxy::oauth_consumer_key', undef),
+    oauth_consumer_secret => hiera('profiles::smartproxy::oauth_consumer_secret', undef),
+    manage_sudoersd       => hiera('profiles::smartproxy::manage_sudoersd', true),
+    manage_puppet_group   => hiera('profiles::smartproxy::manage_puppet_group', false),
+    trusted_hosts         => hiera_array('profiles::smartproxy::trusted_hosts', []),
+    custom_repo           => hiera('profiles::smartproxy::custom_repo', false),
+    puppetca              => hiera('profiles::smartproxy::puppetca', false),
+    puppetca_listen_on    => hiera('profiles::smartproxy::puppetca_listen_on', 'https'),
+    puppet                => hiera('profiles::smartproxy::puppet', false),
+    puppet_listen_on      => hiera('profiles::smartproxy::puppet_listen_on', 'https'),
+    logs                  => hiera('profiles::smartproxy::logs', true),
+    logs_listen_on        => hiera('profiles::smartproxy::logs_listen_on', 'https'),
+    tftp                  => hiera('profiles::smartproxy::tftp', false),
+    tftp_listen_on        => hiera('profiles::smartproxy::tftp_listen_on', 'https'),
+    tftp_servername       => hiera('profiles::smartproxy::tftp_servername', undef),
+    bmc                   => hiera('profiles::smartproxy::bmc', false),
+    realm                 => hiera('profiles::smartproxy::realm', false),
+    realm_listen_on       => hiera('profiles::smartproxy::realm_listen_on', 'https'),
+    realm_principal       => hiera('profiles::smartproxy::realm_principal', undef),
+    realm_provider        => hiera('profiles::smartproxy::realm_provider', freeipa),
+    freeipa_remove_dns    => hiera('profiles::smartproxy::freeipa_remove_dns', false),
+    dhcp                  => hiera('profiles::smartproxy::dhcp', false),
+    dhcp_managed          => hiera('profiles::smartproxy::dhcp_managed', false),
+    dhcp_provider         => hiera('profiles::smartproxy::dhcp_vendor', undef),
+    dhcp_key_secret       => hiera('profiles::smartproxy::dhcp_key_secret', undef),
+    dhcp_key_name         => hiera('profiles::smartproxy::dhcp_key_name', undef),
+    dns                   => hiera('profiles::smartproxy::dns', false),
+    dns_managed           => hiera('profiles::smartproxy::dns_managed', false),
+    dns_provider          => hiera('profiles::smartproxy::dns_provider', undef),
+    dns_server            => hiera('profiles::smartproxy::dns_server', undef),
+    dns_tsig_principal    => hiera('profiles::smartproxy::dns_tsig_principal', undef),
+    dns_interface         => hiera('profiles::smartproxy::dns_interface', undef),
+    keyfile               => hiera('profiles::smartproxy::dns_keyfile', undef),
+  }
+
+}
