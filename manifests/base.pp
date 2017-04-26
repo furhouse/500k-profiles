@@ -66,7 +66,6 @@ class profiles::base {
   }
 
   class { '::vim': }
-  class { '::git': }
 
   class { '::sudo': }
   $sudo_cfg = hiera('profiles::base::sudo_configs', {})
