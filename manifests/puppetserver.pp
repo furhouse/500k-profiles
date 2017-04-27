@@ -39,6 +39,8 @@ class profiles::puppetserver {
 
   class { '::r10k::webhook::config':
     use_mcollective  => hiera('profiles::puppetserver::r10k_hook_use_mco', false),
+    user             => hiera('profiles::puppetserver::r10k_user', undef),
+    pass             => hiera('profiles::puppetserver::r10k_pass', undef),
     public_key_path  => "/etc/puppetlabs/puppet/ssl/ca/signed/${facts['fqdn']}.pem",
     private_key_path => "/etc/puppetlabs/puppet/ssl/private_keys/${facts['fqdn']}.pem",
   }
@@ -49,12 +51,16 @@ class profiles::puppetserver {
   }
   Class['r10k::webhook::config'] -> Class['r10k::webhook']
 
+  $base_hierarchy = ['nodes/%{::fqdn}']
+  $expand_hierarchy = hiera_array('profiles::puppetserver::hiera_hierarchy', [])
+  $final_hierarchy = concat($base_hierarchy, $expand_hierarchy)
+
   class { '::hiera':
     datadir            => '/etc/puppetlabs/code/hieradata/%{::environment}',
     logger             => 'console',
     merge_behavior     => hiera('profiles::puppetserver::hiera_merge', 'deeper'),
     puppet_conf_manage => hiera('profiles::puppetserver::hiera_puppet_conf_manage', false),
-    hierarchy          => hiera_array('profiles::puppetserver::hiera_hierarchy', []),
+    hierarchy          => $final_hierarchy,
   }
 
 }
